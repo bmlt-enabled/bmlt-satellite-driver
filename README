@@ -1,0 +1,35 @@
+DESCRIPTION
+-----------
+
+This is a class that is to be used by PHP coders, for writing custom satellite implementations
+of the BMLT (Basic Meeting List Toolbox).
+
+It is a class that handles the controller layer in the BMLT client/server system. This class will
+deal with all HTTP interactions, and uses the XML interface of the BMLT root server to operate.
+
+Read more about this class here: http://magshare.org/blog/the-satellite-driver-class/
+
+REQUIREMENTS
+------------
+
+This class requires a root server version of at least 1.8.1, and 1.8.31 introduces some new details
+that will add more capability. It *MAY* work with older root servers, but there are no guarantees as
+to the level of functionality available.
+
+ 
+INSTALLATION
+------------
+
+Simply include the bmlt_satellite_controller.class.php file, and instantiate an instance of
+bmlt_satellite_controller.
+
+See the unit_test.php and application_test.php files for usage examples.
+
+CHANGELIST
+----------
+
+= Version 1.0.4 =
+* June 7, 2011
+* Moved the project to GitHub
+* Added the capability to extract more information about Service bodies. NOTE: Requires Root server version 1.8.31 or greater.
+* Added the capability to look up changes for just one meeting (by ID). NOTE: Requires Root server version 1.8.31 or greater.
