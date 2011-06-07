@@ -37,6 +37,9 @@ define ('U_TEST_REMOTE_URI', 'http://bmlt.magshare.net/trunk/main_server' );
 /// If running on localhost, you can specify a local root URI. Comment this out to always use remote.
 define ('U_TEST_LOCAL_URI', 'http://localhost/test/bmlt_trunk' );
 
+/// This is an ID for a specific meeting (with some changes) for the meeting changes test.
+define ( 'U_TEST_MEETING_ID', 734 );
+
 /****************************************************************************************//**
 *	\brief Returns the URI for the test server. The default is the public trunk test server	*
 *	and you can specify a local server if running on a localhost machine.					*
@@ -844,6 +847,7 @@ function u_test_changes ( $in_root_server_uri		///< The server URI.
 	$ret = null;
 	$ret = '<h1 id="change_request_test"># BEGIN CHANGE REQUEST UNIT TEST</h1>';
 	$ret .= '<div class="test_container_div">';
+	$ret .= '<h2 id="change_request_test"># BEGIN GENERAL CHANGES TEST</h1>';
 	
 	$start_time = microtime ( true );
 	$test_subject = new bmlt_satellite_controller ( $in_root_server_uri );
@@ -886,7 +890,39 @@ function u_test_changes ( $in_root_server_uri		///< The server URI.
 			$ret .= 'The test failed, because the object returned no meeting changes for the given period.';
 			}
 		}
-	
+	$ret .= '<h2># END GENERAL CHANGES TEST</h1>';
+	$ret .= '</div>';
+	$ret .= '<div class="test_container_div">';
+	$ret .= '<h2 id="change_meeting_request_test"># BEGIN SPECIFIC MEETING CHANGES TEST</h1>';
+		$change_array = $test_subject->get_meeting_changes ( null, null, U_TEST_MEETING_ID );
+		$error_message = $test_subject->get_m_error_message();
+		if ( $error_message )
+			{
+			$ret .= 'The test failed, because the object reported the following error: "'.htmlspecialchars ( $error_message ).'"';
+			}
+		elseif ( is_array ( $change_array ) && count ( $change_array ) )
+			{
+			$total_time = intval ( (microtime ( true ) - $start_time) * 1000 );
+			// We now have a meeting search result. Let's display it.
+			$ret .= '<h2>Test Passed! (The complete transaction took ';
+			if ( $total_time > 1000 )
+				{
+				$total_time /= 1000.0;
+				$ret .= htmlspecialchars ( $total_time ).' seconds';
+				}
+			else
+				{
+				$ret .= htmlspecialchars ( $total_time ).' milliseconds';
+				}
+			$ret .= ' to run.) Here are the meeting changes for this meeting:</h2><div class="test_container_div">';
+			$ret .= '<pre>'.htmlspecialchars ( print_r ( $change_array, true ) ).'</pre>';
+			$ret .= '</div>';
+			}
+		else
+			{
+			$ret .= 'The test failed, because the object returned no meeting changes for the given period.';
+			}
+	$ret .= '<h2># END SPECIFIC MEETING CHANGES TEST</h1>';
 	$ret .= '</div>';
 	$ret .= '<h1># END CHANGE REQUEST UNIT TEST</h1>';
 	

@@ -431,7 +431,8 @@ class bmlt_satellite_controller
 	*	\returns An indexed array containing the change records as associative arrays.		*
 	****************************************************************************************/
 	function get_meeting_changes ( 	$in_start_date = null,	///< Optional. If given (a PHP time() format UNIX Epoch time), the changes will be loaded from midnight (00:00:00) of the date of the time.
-									$in_end_date = null		///< Optional. If given (a PHP time() format UNIX Epoch time), the changes will be loaded until midnight (23:59:59) of the date of the time.
+									$in_end_date = null,	///< Optional. If given (a PHP time() format UNIX Epoch time), the changes will be loaded until midnight (23:59:59) of the date of the time.
+									$in_meeting_id = null   ///< If supplied, an ID for a particular meeting. Only changes for that meeting will be returned.
 									)
 	{
 		$ret = null;
@@ -453,6 +454,11 @@ class bmlt_satellite_controller
 		if ( intval ( $in_end_date ) )
 			{
 			$uri .= '&end_date='.date ( 'Y-m-d', intval ( $in_end_date ) );
+			}
+		
+		if ( intval ( $in_meeting_id ) )
+			{
+			$uri .= '&meeting_id='.intval ( $in_meeting_id );
 			}
 	
 		// Get the XML data from the remote server. We will use GET.
@@ -493,17 +499,17 @@ class bmlt_satellite_controller
 						}
 					else
 						{
-						$this->set_m_error_message ( 'get_meeting_changes: Invalid File Format ('.$uri.')' );
+						$this->set_m_error_message ( 'get_meeting_changes: Invalid XML Format ('.$uri.')' );
 						}
 					}
 				else
 					{
-					$this->set_m_error_message ( 'get_meeting_changes: Invalid File Format ('.$uri.')' );
+					$this->set_m_error_message ( 'get_meeting_changes: Invalid XML Format ('.$uri.')' );
 					}
 				}
 			else
 				{
-				$this->set_m_error_message ( 'get_meeting_changes: Invalid File Format ('.$uri.')' );
+				$this->set_m_error_message ( 'get_meeting_changes: Invalid XML Format ('.$uri.')' );
 				}
 			}
 		elseif ( !$this->get_m_error_message() )
@@ -539,7 +545,7 @@ class bmlt_satellite_controller
 			{
 			$uri = $this->get_m_root_uri();	// Get the cleaned URI.
 			
-			$uri .= '/client_interface/xml/index.php?switcher=GetFormats';	// We will load the XML file.
+			$uri .= '/client_interface/xml/index.php?switcher=GetFormats';	// We will load the XML XML.
 		
 			// Get the XML data from the remote server. We will use GET.
 			$data = self::call_curl ( $uri, false, $error_message );
@@ -579,17 +585,17 @@ class bmlt_satellite_controller
 							}
 						else
 							{
-							$this->set_m_error_message ( 'get_server_formats: Invalid File Format ('.$uri.')' );
+							$this->set_m_error_message ( 'get_server_formats: Invalid XML Format ('.$uri.')' );
 							}
 						}
 					else
 						{
-						$this->set_m_error_message ( 'get_server_formats: Invalid File Format ('.$uri.')' );
+						$this->set_m_error_message ( 'get_server_formats: Invalid XML Format ('.$uri.')' );
 						}
 					}
 				else
 					{
-					$this->set_m_error_message ( 'get_server_formats: Invalid File Format ('.$uri.')' );
+					$this->set_m_error_message ( 'get_server_formats: Invalid XML Format ('.$uri.')' );
 					}
 				}
 			elseif ( !$this->get_m_error_message() )
@@ -664,7 +670,7 @@ class bmlt_satellite_controller
 							}
 						else
 							{
-							$this->set_m_error_message ( 'get_server_service_bodies: Invalid File Format ('.$uri.')' );
+							$this->set_m_error_message ( 'get_server_service_bodies: Invalid XML Format ('.$uri.')' );
 							}
 						}
 					else
@@ -746,7 +752,7 @@ class bmlt_satellite_controller
 							}
 						else
 							{
-							$this->set_m_error_message ( 'get_server_meeting_keys: Invalid File Format ('.$uri.')' );
+							$this->set_m_error_message ( 'get_server_meeting_keys: Invalid XML Format ('.$uri.')' );
 							}
 						}
 					else
