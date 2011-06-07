@@ -18,7 +18,7 @@
 	a "driver," not a communication stack. It is up to the implementation to do things like
 	manage multiple transactions and whatnot.
 	
-	\version 1.0.3
+	\version 1.0.4
     
     This file is part of the Basic Meeting List Toolbox (BMLT).
     
@@ -38,6 +38,8 @@
     along with this code.  If not, see <http://www.gnu.org/licenses/>.
 	
 	<h2 id="docs_release_notes">RELEASE NOTES:</h2>
+	- - 1.0.4 Release
+	
 	- February 1, 2011 - 1.0.3 Release
 		- Added the capability to get change records from the server (Requires a root server version of 1.8.13 or greater).
 		
@@ -1259,7 +1261,15 @@ class bmlt_satellite_controller
 		$ret = array();
 		$id = $in_dom_node->getAttribute('id');
 		$name = $in_dom_node->getAttribute('sb_name');
+		$description = $in_dom_node->getAttribute('sb_desc');
+		$type = $in_dom_node->getAttribute('sb_type');
+		$uri = $in_dom_node->getAttribute('sb_uri');
+		$kmluri = $in_dom_node->getAttribute('sb_kmluri');
 		$ret['name'] = $name;
+		$ret['description'] = $description;
+		$ret['type'] = $type;
+		$ret['uri'] = $uri;
+		$ret['kmluri'] = $kmluri;
 		if ( $in_dom_node->hasChildNodes() )
 			{
 			foreach ( $in_dom_node->childNodes as $sb_node )

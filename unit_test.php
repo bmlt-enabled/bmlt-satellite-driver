@@ -2,7 +2,7 @@
 /****************************************************************************************//**
 * \file unit_test.php																		*
 * \brief A unit test harness for the bmlt_satellite_controller class.						*
-* \version 1.0.1																			*
+* \version 1.0.2																			*
     
     This file is part of the Basic Meeting List Toolbox (BMLT).
     
@@ -197,16 +197,22 @@ function u_test_get_standard_server_parameters ( &$in_test_subject,	///< The obj
 function u_test_draw_service_body ( $in_service_body_array
 									)
 {
-	$ret = '<div class="name_div">'.htmlspecialchars ( $in_service_body_array['name'] ).'</div>';
-	if ( isset ( $in_service_body_array['children'] ) && is_array ( $in_service_body_array['children'] ) && count ( $in_service_body_array['children'] ) )
-		{
-		$ret .= '<div class="test_container_div">';
-		foreach ( $in_service_body_array['children'] as $child )
-			{
-			$ret .= u_test_draw_service_body ( $child );
-			}
-		$ret .= '</div>';
-		}
+	$ret = '<div class="name_div"><strong>'.htmlspecialchars ( $in_service_body_array['name'] ).'</strong></div>';
+	$ret .= '<div class="test_container_div">';
+        $ret .= '<div class="type_div">'.htmlspecialchars ( $in_service_body_array['type'] ).'</div>';
+        $ret .= '<div class="desc_div">'.htmlspecialchars ( $in_service_body_array['description'] ).'</div>';
+        $ret .= '<div class="uri_div">'.htmlspecialchars ( $in_service_body_array['uri'] ).'</div>';
+        $ret .= '<div class="kmluri_div">'.htmlspecialchars ( $in_service_body_array['kmluri'] ).'</div>';
+        if ( isset ( $in_service_body_array['children'] ) && is_array ( $in_service_body_array['children'] ) && count ( $in_service_body_array['children'] ) )
+            {
+            $ret .= '<div class="test_container_div">';
+            foreach ( $in_service_body_array['children'] as $child )
+                {
+                $ret .= u_test_draw_service_body ( $child );
+                }
+            $ret .= '</div>';
+            }
+        $ret .= '</div>';
 	
 	return $ret;
 }
