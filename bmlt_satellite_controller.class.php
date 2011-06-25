@@ -18,7 +18,7 @@
 	a "driver," not a communication stack. It is up to the implementation to do things like
 	manage multiple transactions and whatnot.
 	
-	\version 1.0.4
+	\version 1.0.5
     
     This file is part of the Basic Meeting List Toolbox (BMLT).
     
@@ -38,8 +38,14 @@
     along with this code.  If not, see <http://www.gnu.org/licenses/>.
 	
 	<h2 id="docs_release_notes">RELEASE NOTES:</h2>
-	- - 1.0.4 Release
-	
+	- June 25, 2011 - 1.0.5 Release
+	    - Added the Service body ID to the Changes function. NOTE: Requires Root server version 1.8.32 or greater.
+
+    - June 7, 2011 - 1.0.4 Release
+	    - Moved the project to GitHub
+	    - Added the capability to extract more information about Service bodies. NOTE: Requires Root server version 1.8.31 or greater.
+	    - Added the capability to look up changes for just one meeting (by ID). NOTE: Requires Root server version 1.8.31 or greater.
+	    
 	- February 1, 2011 - 1.0.3 Release
 		- Added the capability to get change records from the server (Requires a root server version of 1.8.13 or greater).
 		
@@ -430,9 +436,10 @@ class bmlt_satellite_controller
 	*																						*	
 	*	\returns An indexed array containing the change records as associative arrays.		*
 	****************************************************************************************/
-	function get_meeting_changes ( 	$in_start_date = null,	///< Optional. If given (a PHP time() format UNIX Epoch time), the changes will be loaded from midnight (00:00:00) of the date of the time.
-									$in_end_date = null,	///< Optional. If given (a PHP time() format UNIX Epoch time), the changes will be loaded until midnight (23:59:59) of the date of the time.
-									$in_meeting_id = null   ///< If supplied, an ID for a particular meeting. Only changes for that meeting will be returned.
+	function get_meeting_changes ( 	$in_start_date = null,	    ///< Optional. If given (a PHP time() format UNIX Epoch time), the changes will be loaded from midnight (00:00:00) of the date of the time.
+									$in_end_date = null,	    ///< Optional. If given (a PHP time() format UNIX Epoch time), the changes will be loaded until midnight (23:59:59) of the date of the time.
+									$in_meeting_id = null,      ///< If supplied, an ID for a particular meeting. Only changes for that meeting will be returned.
+									$in_service_body_id = null  ///< If supplied, an ID for a particular Service body. Only changes for meetings within that Service body will be returned.
 									)
 	{
 		$ret = null;
@@ -459,6 +466,11 @@ class bmlt_satellite_controller
 		if ( intval ( $in_meeting_id ) )
 			{
 			$uri .= '&meeting_id='.intval ( $in_meeting_id );
+			}
+		
+		if ( intval ( $in_service_body_id ) )
+			{
+			$uri .= '&in_service_body_id='.intval ( $in_service_body_id );
 			}
 	
 		// Get the XML data from the remote server. We will use GET.

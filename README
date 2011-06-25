@@ -31,6 +31,9 @@ This class is used in all of the current CMS satellite classes, via the BMLT Sat
 
 CHANGELIST
 ----------
+= Version 1.0.5 =
+* June 25, 2011
+* Added the Service body ID to the Changes function. NOTE: Requires Root server version 1.8.32 or greater.
 
 = Version 1.0.4 =
 * June 7, 2011
