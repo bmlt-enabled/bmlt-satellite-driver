@@ -18,7 +18,7 @@
 	a "driver," not a communication stack. It is up to the implementation to do things like
 	manage multiple transactions and whatnot.
 	
-	\version 1.0.5
+	\version 1.0.6
     
     This file is part of the Basic Meeting List Toolbox (BMLT).
     
@@ -38,6 +38,9 @@
     along with this code.  If not, see <http://www.gnu.org/licenses/>.
 	
 	<h2 id="docs_release_notes">RELEASE NOTES:</h2>
+	- June 26, 2011 - 1.0.6 Release
+	    - Fixed the Service Body bug I introduced when I added it.
+	    
 	- June 25, 2011 - 1.0.5 Release
 	    - Added the Service body ID to the Changes function. NOTE: Requires Root server version 1.8.32 or greater.
 
@@ -470,7 +473,7 @@ class bmlt_satellite_controller
 		
 		if ( intval ( $in_service_body_id ) )
 			{
-			$uri .= '&in_service_body_id='.intval ( $in_service_body_id );
+			$uri .= '&service_body_id='.intval ( $in_service_body_id );
 			}
 	
 		// Get the XML data from the remote server. We will use GET.
