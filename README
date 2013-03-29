@@ -31,6 +31,10 @@ This class is used in all of the current CMS satellite classes, via the BMLT Sat
 
 CHANGELIST
 ----------
+= Version 1.0.7 =
+* March 29, 2013
+* Added a bit of code to preserve the session across the call.
+
 = Version 1.0.6 =
 * June 26, 2011
 * Fixed the Service Body bug I introduced when I added it.
