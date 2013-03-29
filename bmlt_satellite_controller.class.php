@@ -18,11 +18,11 @@
 	a "driver," not a communication stack. It is up to the implementation to do things like
 	manage multiple transactions and whatnot.
 	
-	\version 1.0.6
+	\version 1.0.7
     
     This file is part of the Basic Meeting List Toolbox (BMLT).
     
-    Find out more at: http://bmlt.magshare.org
+    Find out more at: http://magshare.org/bmlt
     
     BMLT is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,6 +38,9 @@
     along with this code.  If not, see <http://www.gnu.org/licenses/>.
 	
 	<h2 id="docs_release_notes">RELEASE NOTES:</h2>
+	- March 29, 2013 - 1.0.7 Release
+	    - Added a bit of code to preserve the session across the call.
+	    
 	- June 26, 2011 - 1.0.6 Release
 	    - Fixed the Service Body bug I introduced when I added it.
 	    
@@ -1357,6 +1360,11 @@ class bmlt_satellite_controller
 			}
 		else
 			{
+			// This gets the session as a cookie.
+            $strCookie = 'PHPSESSID=' . $_COOKIE['PHPSESSID'] . '; path=/';
+
+            session_write_close();
+  
 			// Create a new cURL resource.
 			$resource = curl_init();
 			
@@ -1382,6 +1390,9 @@ class bmlt_satellite_controller
 					}
 				}
 			
+            curl_setopt( $resource, CURLOPT_RETURNTRANSFER, 1 ); 
+            curl_setopt( $resource, CURLOPT_COOKIE, $strCookie ); 
+
 			// Set url to call.
 			curl_setopt ( $resource, CURLOPT_URL, $in_uri );
 			
