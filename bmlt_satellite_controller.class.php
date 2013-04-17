@@ -18,7 +18,7 @@
 	a "driver," not a communication stack. It is up to the implementation to do things like
 	manage multiple transactions and whatnot.
 	
-	\version 1.0.7
+	\version 1.0.8
     
     This file is part of the Basic Meeting List Toolbox (BMLT).
     
@@ -38,6 +38,9 @@
     along with this code.  If not, see <http://www.gnu.org/licenses/>.
 	
 	<h2 id="docs_release_notes">RELEASE NOTES:</h2>
+	- April 16, 2013 - 1.0.8 Release
+	    - Fixed a warning that bothers Drupal 7.
+	    
 	- March 29, 2013 - 1.0.7 Release
 	    - Added a bit of code to preserve the session across the call.
 	    
@@ -1361,7 +1364,7 @@ class bmlt_satellite_controller
 		else
 			{
 			// This gets the session as a cookie.
-            $strCookie = 'PHPSESSID=' . $_COOKIE['PHPSESSID'] . '; path=/';
+            $strCookie = 'PHPSESSID=' . (isset ( $_COOKIE['PHPSESSID'] ) ? $_COOKIE['PHPSESSID'] : '') . '; path=/';
 
             session_write_close();
   
