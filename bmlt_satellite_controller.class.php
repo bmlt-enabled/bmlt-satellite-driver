@@ -18,7 +18,7 @@
 	a "driver," not a communication stack. It is up to the implementation to do things like
 	manage multiple transactions and whatnot.
 	
-	\version 1.0.8
+	\version 1.0.9
     
     This file is part of the Basic Meeting List Toolbox (BMLT).
     
@@ -38,6 +38,9 @@
     along with this code.  If not, see <http://www.gnu.org/licenses/>.
 	
 	<h2 id="docs_release_notes">RELEASE NOTES:</h2>
+	- April 18, 2013 - 1.0.9 Release
+	    - Fixed an issue with the curl call that might interfere with sessions.
+	    
 	- April 16, 2013 - 1.0.8 Release
 	    - Fixed a warning that bothers Drupal 7.
 	    
@@ -1364,13 +1367,21 @@ class bmlt_satellite_controller
 		else
 			{
 			// This gets the session as a cookie.
-            $strCookie = 'PHPSESSID=' . (isset ( $_COOKIE['PHPSESSID'] ) ? $_COOKIE['PHPSESSID'] : '') . '; path=/';
+            if (isset ( $_COOKIE['PHPSESSID'] ) && $_COOKIE['PHPSESSID'] )
+                {
+                $strCookie = 'PHPSESSID=' . $_COOKIE['PHPSESSID'] . '; path=/';
 
-            session_write_close();
-  
-			// Create a new cURL resource.
-			$resource = curl_init();
-			
+                session_write_close();
+                }
+
+            // Create a new cURL resource.
+            $resource = curl_init();
+        
+            if ( $strCookie )
+                {
+                curl_setopt ( $resource, CURLOPT_COOKIE, $strCookie );
+                }
+        
 			// If we will be POSTing this transaction, we split up the URI.
 			if ( $in_post )
 				{

@@ -31,6 +31,10 @@ This class is used in all of the current CMS satellite classes, via the BMLT Sat
 
 CHANGELIST
 ----------
+= Version 1.0.9 =
+* April 18, 2013
+* Fixed an issue with the curl call that might interfere with sessions.
+
 = Version 1.0.8 =
 * April 16, 2013
 * Fixed an issue that gave Drupal 7 fits.
