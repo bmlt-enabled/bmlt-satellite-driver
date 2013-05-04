@@ -18,7 +18,7 @@
 	a "driver," not a communication stack. It is up to the implementation to do things like
 	manage multiple transactions and whatnot.
 	
-	\version 1.0.9
+	\version 1.0.10
     
     This file is part of the Basic Meeting List Toolbox (BMLT).
     
@@ -1377,7 +1377,7 @@ class bmlt_satellite_controller
             // Create a new cURL resource.
             $resource = curl_init();
         
-            if ( $strCookie )
+            if ( isset ( $strCookie ) && $strCookie )
                 {
                 curl_setopt ( $resource, CURLOPT_COOKIE, $strCookie );
                 }
@@ -1404,8 +1404,10 @@ class bmlt_satellite_controller
 					}
 				}
 			
-            curl_setopt( $resource, CURLOPT_RETURNTRANSFER, 1 ); 
-            curl_setopt( $resource, CURLOPT_COOKIE, $strCookie ); 
+            if ( isset ( $strCookie ) && $strCookie )
+                {
+                curl_setopt( $resource, CURLOPT_COOKIE, $strCookie );
+                }
 
 			// Set url to call.
 			curl_setopt ( $resource, CURLOPT_URL, $in_uri );
