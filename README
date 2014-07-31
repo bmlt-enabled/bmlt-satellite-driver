@@ -31,6 +31,10 @@ This class is used in all of the current CMS satellite classes, via the BMLT Sat
 
 CHANGELIST
 ----------
+= Version 1.0.11 =
+* July 31, 2014
+* Added a useragent to the cal_curl function, as some servers may block cURL.
+
 = Version 1.0.10 =
 * May 10, 2013
 * Fixed some warnings for strict mode.

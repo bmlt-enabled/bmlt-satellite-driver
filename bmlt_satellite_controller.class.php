@@ -18,7 +18,7 @@
 	a "driver," not a communication stack. It is up to the implementation to do things like
 	manage multiple transactions and whatnot.
 	
-	\version 1.0.10
+	\version 1.0.11
     
     This file is part of the Basic Meeting List Toolbox (BMLT).
     
@@ -1434,6 +1434,9 @@ class bmlt_satellite_controller
 			// Direct cURL to send request header to server allowing compressed content to be returned and decompressed automatically (use only if needed).
 			curl_setopt ( $resource, CURLOPT_ENCODING, 'gzip,deflate' );
 			
+			// Pretend we're a browser, so that anti-cURL settings don't pooch us.
+			curl_setopt ( $resource, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)" ); 
+
 			// Execute cURL call and return results in $content variable.
 			$content = curl_exec ( $resource );
 			

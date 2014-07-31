@@ -2,7 +2,7 @@
 /****************************************************************************************//**
 * \file unit_test.php																		*
 * \brief A unit test harness for the bmlt_satellite_controller class.						*
-* \version 1.0.2																			*
+* \version 1.0.11																			*
     
     This file is part of the Basic Meeting List Toolbox (BMLT).
     
@@ -35,7 +35,7 @@ require_once ( 'bmlt_satellite_controller.class.php' );
 define ('U_TEST_REMOTE_URI', 'http://bmlt.magshare.net/trunk/main_server' );
 
 /// If running on localhost, you can specify a local root URI. Comment this out to always use remote.
-define ('U_TEST_LOCAL_URI', 'http://localhost/test/bmlt_trunk' );
+define ('U_TEST_LOCAL_URI', 'http://bmlt-server.localhost' );
 
 /// This is an ID for a specific meeting (with some changes) for the meeting changes test.
 define ( 'U_TEST_MEETING_ID', 734 );
@@ -557,7 +557,7 @@ function u_test_complex_search( $in_root_server_uri,		///< The root uri of the s
 					}
 				else
 					{
-					$test_subject->set_current_transaction_parameter ( 'formats', array ( 1, 17 ) );
+					$test_subject->set_current_transaction_parameter ( 'formats', array ( 17 ) );
 					$error_message = $test_subject->get_m_error_message();
 					if ( $error_message )
 						{
