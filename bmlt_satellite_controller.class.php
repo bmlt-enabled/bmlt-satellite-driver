@@ -1,24 +1,9 @@
 <?php
 /****************************************************************************************/
 /**
-	\mainpage
+	\brief Provides low-level communication to the BMLT Root Server.
 	
-	<div style="height:24px"></div>
-	<div style="height:80px;background-color: #0013d2;background-image:url(../images/DocHeader.gif);background-position:center top;background-repeat:no-repeat"></div>
-
-	<h1>INTRODUCTION</h1>
-	
-	This is designed to provide a functional interface to a communication infrastructure for
-	BMLT satellites. It communicates with the root server using the XML variant of the REST
-	interface.
-
-	This class will not use a class to hold transactions or parameters. This is because the
-	fox ain't worth the chase (http://philip.greenspun.com/humor/eecs-difference-explained)
-	That being said, transactions can be serialized and restored. This class is to be used as
-	a "driver," not a communication stack. It is up to the implementation to do things like
-	manage multiple transactions and whatnot.
-	
-	\version 1.0.11
+	\version 1.0.12
     
     This file is part of the Basic Meeting List Toolbox (BMLT).
     
@@ -36,33 +21,6 @@
     
     You should have received a copy of the GNU General Public License
     along with this code.  If not, see <http://www.gnu.org/licenses/>.
-	
-	<h2 id="docs_release_notes">RELEASE NOTES:</h2>
-	- April 18, 2013 - 1.0.9 Release
-	    - Fixed an issue with the curl call that might interfere with sessions.
-	    
-	- April 16, 2013 - 1.0.8 Release
-	    - Fixed a warning that bothers Drupal 7.
-	    
-	- March 29, 2013 - 1.0.7 Release
-	    - Added a bit of code to preserve the session across the call.
-	    
-	- June 26, 2011 - 1.0.6 Release
-	    - Fixed the Service Body bug I introduced when I added it.
-	    
-	- June 25, 2011 - 1.0.5 Release
-	    - Added the Service body ID to the Changes function. NOTE: Requires Root server version 1.8.32 or greater.
-
-    - June 7, 2011 - 1.0.4 Release
-	    - Moved the project to GitHub
-	    - Added the capability to extract more information about Service bodies. NOTE: Requires Root server version 1.8.31 or greater.
-	    - Added the capability to look up changes for just one meeting (by ID). NOTE: Requires Root server version 1.8.31 or greater.
-	    
-	- February 1, 2011 - 1.0.3 Release
-		- Added the capability to get change records from the server (Requires a root server version of 1.8.13 or greater).
-		
-	- January 24, 2011 - 1.0.2 Release
-		- The partial response (data_field_key). Di not work. It has been fixed. 
 */
 
 /****************************************************************************************//**
