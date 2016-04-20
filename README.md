@@ -40,6 +40,7 @@ This class is used in all of the current CMS satellite classes, via the BMLT Sat
 CHANGELIST
 ----------
 ***Version 1.0.12** -April 15, 2016*
+
 * Changes to documentation -that's all.
 
 ***Version 1.0.11** -July 31, 2014*
