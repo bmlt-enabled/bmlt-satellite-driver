@@ -21,7 +21,7 @@ REQUIREMENTS
 ------------
 
 This class requires a root server version of at least 1.8.1, and 1.8.31 introduces some new details
-that will add more capability. It *MAY* work with older root servers, but there are no guarantees as
+that will add more capability. It *MAY- work with older root servers, but there are no guarantees as
 to the level of functionality available.
 
  
@@ -39,40 +39,45 @@ This class is used in all of the current CMS satellite classes, via the BMLT Sat
 
 CHANGELIST
 ----------
+***Version 1.0.13** -TBD*
+
+- Got rid of the useless and non-functional application test.
+- Replaced tabs with spaces (detabbed).
+
 ***Version 1.0.12** -April 15, 2016*
 
-* Changes to documentation -that's all.
+- Changes to documentation -that's all.
 
 ***Version 1.0.11** -July 31, 2014*
 
-* Added a useragent to the cal_curl function, as some servers may block cURL.
+- Added a useragent to the cal_curl function, as some servers may block cURL.
 
 ***Version 1.0.10** -May 10, 2013*
 
-* Fixed some warnings for strict mode.
+- Fixed some warnings for strict mode.
 
 ***Version 1.0.9** -April 18, 2013*
 
-* Fixed an issue with the curl call that might interfere with sessions.
+- Fixed an issue with the curl call that might interfere with sessions.
 
 ***Version 1.0.8** -April 16, 2013*
 
-* Fixed an issue that gave Drupal 7 fits.
+- Fixed an issue that gave Drupal 7 fits.
 
 ***Version 1.0.7** -March 29, 2013*
 
-* Added a bit of code to preserve the session across the call.
+- Added a bit of code to preserve the session across the call.
 
 ***Version 1.0.6** -June 26, 2011*
 
-* Fixed the Service Body bug I introduced when I added it.
+- Fixed the Service Body bug I introduced when I added it.
 
 ***Version 1.0.5** -June 25, 2011*
 
-* Added the Service body ID to the Changes function. NOTE: Requires Root server version 1.8.32 or greater.
+- Added the Service body ID to the Changes function. NOTE: Requires Root server version 1.8.32 or greater.
 
 ***Version 1.0.4** -June 7, 2011*
 
-* Moved the project to GitHub
-* Added the capability to extract more information about Service bodies. NOTE: Requires Root server version 1.8.31 or greater.
-* Added the capability to look up changes for just one meeting (by ID). NOTE: Requires Root server version 1.8.31 or greater.
+- Moved the project to GitHub
+- Added the capability to extract more information about Service bodies. NOTE: Requires Root server version 1.8.31 or greater.
+- Added the capability to look up changes for just one meeting (by ID). NOTE: Requires Root server version 1.8.31 or greater.
