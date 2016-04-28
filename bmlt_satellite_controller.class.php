@@ -3,7 +3,7 @@
 /**
     \brief Provides low-level communication to the BMLT Root Server.
     
-    \version 1.0.13
+    \version 1.0.14
     
     This file is part of the Basic Meeting List Toolbox (BMLT).
     
