@@ -21,7 +21,7 @@ REQUIREMENTS
 ------------
 
 This class requires a root server version of at least 1.8.1, and 1.8.31 introduces some new details
-that will add more capability. It *MAY- work with older root servers, but there are no guarantees as
+that will add more capability. It *MAY* work with older root servers, but there are no guarantees as
 to the level of functionality available.
 
  
@@ -40,6 +40,7 @@ CHANGELIST
 ***Version 1.0.14* ** *- TBD*
 
 - Adjusted the README to compensate for Atlassian's new format.
+- Added [Doxygen](http://doxygen.nl) documentation.
 
 ***Version 1.0.13* ** *- April 21, 2016*
 
