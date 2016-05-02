@@ -37,7 +37,7 @@ This class is used in all of the current CMS satellite classes, via [the BMLT Sa
 
 CHANGELIST
 ----------
-***Version 1.0.14* ** *- TBD*
+***Version 1.0.14* ** *- May 2, 2016*
 
 - Adjusted the README to compensate for Atlassian's new format.
 - Added [Doxygen](http://doxygen.nl) documentation.
