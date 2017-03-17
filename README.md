@@ -37,6 +37,10 @@ This class is used in all of the current CMS satellite classes, via [the BMLT Sa
 
 CHANGELIST
 ----------
+***Version 1.0.15* ** *- March 17, 2017*
+
+- Added a blank "index.php" file to prevent dir listings.
+
 ***Version 1.0.14* ** *- May 2, 2016*
 
 - Adjusted the README to compensate for Atlassian's new format.
