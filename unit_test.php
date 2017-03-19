@@ -2,7 +2,7 @@
 /****************************************************************************************//**
 * \file unit_test.php																		*
 * \brief A unit test harness for the bmlt_satellite_controller class.						*
-* \version 1.0.15																			*
+* \version 1.0.16																			*
     
     This file is part of the Basic Meeting List Toolbox (BMLT).
     

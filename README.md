@@ -37,6 +37,10 @@ This class is used in all of the current CMS satellite classes, via [the BMLT Sa
 
 CHANGELIST
 ----------
+***Version 1.0.16* ** *- March 19, 2017*
+
+- Fixed a couple of extremely minor issues in the call_curl method that could cause warnings.
+
 ***Version 1.0.15* ** *- March 17, 2017*
 
 - Added a blank "index.php" file to prevent dir listings.
