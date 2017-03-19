@@ -3,7 +3,7 @@
 /**
     \brief Provides low-level communication to the BMLT Root Server.
     
-    \version 1.0.16
+    \version 1.0.15
     
     This file is part of the Basic Meeting List Toolbox (BMLT).
     
@@ -1343,32 +1343,28 @@ class bmlt_satellite_controller
             // If we will be POSTing this transaction, we split up the URI.
             if ( $in_post )
                 {
-                curl_setopt ( $resource, CURLOPT_POST, true );
-                
                 $spli = explode ( "?", $in_uri, 2 );
                 
                 if ( is_array ( $spli ) && count ( $spli ) )
                     {
                     $in_uri = $spli[0];
-                    if ( isset ( $spli[1] ) )
-                        {
-                        $in_params = $spli[1];
-                        // Convert query string into an array using parse_str(). parse_str() will decode values along the way.
-                        parse_str($in_params, $temp);
+                    $in_params = $spli[1];
+                    // Convert query string into an array using parse_str(). parse_str() will decode values along the way.
+                    parse_str($in_params, $temp);
                     
-                        // Now rebuild the query string using http_build_query(). It will re-encode values along the way.
-                        // It will also take original query string params that have no value and appends a "=" to them
-                        // thus giving them and empty value.
-                        $in_params = http_build_query($temp);
+                    // Now rebuild the query string using http_build_query(). It will re-encode values along the way.
+                    // It will also take original query string params that have no value and appends a "=" to them
+                    // thus giving them and empty value.
+                    $in_params = http_build_query($temp);
                 
-                        curl_setopt ( $resource, CURLOPT_POSTFIELDS, $in_params );
-                        }
+                    curl_setopt ( $resource, CURLOPT_POST, true );
+                    curl_setopt ( $resource, CURLOPT_POSTFIELDS, $in_params );
                     }
                 }
             
             if ( isset ( $strCookie ) && $strCookie )
                 {
-                curl_setopt ( $resource, CURLOPT_COOKIE, $strCookie );
+                curl_setopt( $resource, CURLOPT_COOKIE, $strCookie );
                 }
 
             // Set url to call.
@@ -1409,7 +1405,7 @@ class bmlt_satellite_controller
                 if ( isset ( $error_message ) )
                     {
                     // Cram as much info into the error message as possible.
-                    $error_message = "call_curl: curl failure calling $in_uri, ".curl_error ( $resource )."\n".curl_errno ( $resource );
+                    $error_message = 'call_curl: curl failure calling $in_uri, '.curl_error ( $resource )."\n".curl_errno ( $resource );
                     }
                 }
             else
