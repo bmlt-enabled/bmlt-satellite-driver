@@ -37,6 +37,10 @@ This class is used in all of the current CMS satellite classes, via [the BMLT Sa
 
 CHANGELIST
 ----------
+***Version 1.0.17* ** *- June 17, 2017*
+
+- Added a workaround for some non-standard SSL certs.
+
 ***Version 1.0.16* ** *- March 19, 2017*
 
 - Fixed a couple of extremely minor issues in the call_curl method that could cause warnings.

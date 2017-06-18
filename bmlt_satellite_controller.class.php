@@ -3,7 +3,7 @@
 /**
     \brief Provides low-level communication to the BMLT Root Server.
     
-    \version 1.0.16
+    \version 1.0.17
     
     This file is part of the Basic Meeting List Toolbox (BMLT).
     
@@ -1395,6 +1395,9 @@ class bmlt_satellite_controller
             
             // Pretend we're a browser, so that anti-cURL settings don't pooch us.
             curl_setopt ( $resource, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)" ); 
+
+            // Trust meeeee...
+            curl_setopt ( $resource, CURLOPT_SSL_VERIFYPEER, FALSE);
 
             // Execute cURL call and return results in $content variable.
             $content = curl_exec ( $resource );
