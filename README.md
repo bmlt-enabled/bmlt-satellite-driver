@@ -37,6 +37,10 @@ This class is used in all of the current CMS satellite classes, via [the BMLT Sa
 
 CHANGELIST
 ----------
+***Version 1.0.18* ** *- November 10, 2017*
+
+- The spoofed user agent in the call_curl function caused problems with some security software. I changed it to one that I hope works better.
+
 ***Version 1.0.17* ** *- June 17, 2017*
 
 - Added a workaround for some non-standard SSL certs.
