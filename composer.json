@@ -1,0 +1,13 @@
+{
+    "name": "danny/bmlt-satellite-driver",
+    "description": "Provides low-level communication to the BMLT Root Server.",
+    "type": "library",
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "Chris Marshall",
+            "email": "cmarshall@mac.com"
+        }
+    ],
+    "require": {}
+}

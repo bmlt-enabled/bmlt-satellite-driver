@@ -37,6 +37,10 @@ This class is used in all of the current CMS satellite classes, via [the BMLT Sa
 
 CHANGELIST
 ----------
+***Version 1.0.19* ** *- October 31, 2018*
+
+- Adding composer.json file to allow this to be pulled in to other projects easier.
+
 ***Version 1.0.18* ** *- November 10, 2017*
 
 - The spoofed user agent in the call_curl function caused problems with some security software. I changed it to one that I hope works better.
