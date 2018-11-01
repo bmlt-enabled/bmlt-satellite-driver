@@ -1,5 +1,5 @@
 {
-    "name": "danny/bmlt-satellite-driver",
+    "name": "bmlt/bmlt-satellite-driver",
     "description": "Provides low-level communication to the BMLT Root Server.",
     "type": "library",
     "license": "GPL",
