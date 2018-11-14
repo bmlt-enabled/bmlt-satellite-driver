@@ -6,7 +6,7 @@
     
     This file is part of the Basic Meeting List Toolbox (BMLT).
     
-    Find out more at: http://bmlt.magshare.org
+    Find out more at: https://bmlt.app
     
     BMLT is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@
 require_once ( 'bmlt_satellite_controller.class.php' );
 
 /// This is the URI to resolve a test root server (remote). Default is the public trunk test (not stable).
-define ('U_TEST_REMOTE_URI', 'http://bmlt.magshare.net/trunk/main_server' );
+define ('U_TEST_REMOTE_URI', 'https://bmlt.app/trunk/main_server' );
 
 /// If running on localhost, you can specify a local root URI. Comment this out to always use remote.
 define ('U_TEST_LOCAL_URI', 'http://bmlt-server.localhost' );
@@ -45,7 +45,7 @@ define ( 'U_TEST_MEETING_ID', 734 );
 *	and you can specify a local server if running on a localhost machine.					*
 *																							*
 *	NOTE: The caller can override the URI, by providing one in the 'test_uri' query param.	*
-*	Example: unit_test.php?test_uri=http://bmlt.magshare.net/stable/main_server				*
+*	Example: unit_test.php?test_uri=https://bmlt.app/stable/main_server				*
 *																							*
 *	\returns A string. The URI to be presented to the class.								*
 ********************************************************************************************/

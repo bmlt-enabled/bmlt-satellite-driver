@@ -33,7 +33,7 @@ bmlt_satellite_controller.
 
 See the unit_test.php and application_test.php files for usage examples.
 
-This class is used in all of the current CMS satellite classes, via [the BMLT Satellite Base Class](http://bmlt.magshare.net/specific-topics/bmlt-satellite-base-class/)
+This class is used in all of the current CMS satellite classes, via [the BMLT Satellite Base Class](https://bmlt.app/specific-topics/bmlt-satellite-base-class/)
 
 CHANGELIST
 ----------
