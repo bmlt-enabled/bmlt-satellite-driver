@@ -1,0 +1,6 @@
+.gitattributes export-ignore
+.gitignore export-ignore
+.editorconfig export-ignore
+unit_test.php export-ignore
+README.md export-ignore
+/doc export-ignore
