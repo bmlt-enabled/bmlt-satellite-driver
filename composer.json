@@ -9,5 +9,8 @@
     {
       "name": "radius314"
     }],
-  "require": {}
+  "require": {},
+  "require-dev": {
+    "squizlabs/php_codesniffer": "3.*"
+  }
 }
