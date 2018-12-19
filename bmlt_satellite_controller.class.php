@@ -3,7 +3,7 @@
 /**
 \brief Provides low-level communication to the BMLT Root Server.
 
-\version 1.0.19
+\version 1.0.20
 
 This file is part of the Basic Meeting List Toolbox (BMLT).
 
@@ -80,37 +80,28 @@ This array is preset with keys for the available parameters.
     public function __construct(  $in_root_uri_string = null  ///< The URI to the root server, can be null
     )
     {
-        if ( $in_root_uri_string )
-        {
+        if ($in_root_uri_string) {
             // Don't need to flush the params, as we'll be doing that next.
-            $this->set_m_root_uri ( $in_root_uri_string, true );
+            $this->set_m_root_uri($in_root_uri_string, true);
         }
 
         // Initialize the parameters.
         $this->flush_parameters();
 
         // OK, now we talk to the server, and fill up on the various server-specific things.
-        if ( $in_root_uri_string )
-        {
+        if ($in_root_uri_string) {
             // The first thing we do, is get the server version. We must have version 1.8.6 or greater.
             $version = $this->get_server_version();
-            if ( !$this->get_m_error_message() )
-            {
-                $version_int = intval ( str_replace ( '.', '', $version ) );
-                if ( $version_int > 185 )
-                {
-                    if ( !extension_loaded ( 'curl' ) ) // Must have cURL. This puppy won't work without cURL.
-                    {
-                        $this->set_m_error_message ( '__construct: The cURL extension is not available! This code will not work on this server!' );
-                    }
-                    else
-                    {
+            if (!$this->get_m_error_message()) {
+                $version_int = intval(str_replace('.', '', $version));
+                if ($version_int > 185) {
+                    if (!extension_loaded('curl')) { // Must have cURL. This puppy won't work without cURL.
+                        $this->set_m_error_message('__construct: The cURL extension is not available! This code will not work on this server!');
+                    } else {
                         $this->load_standard_outgoing_parameters();
                     }
-                }
-                else
-                {
-                    $this->set_m_error_message ( '__construct: The root server at ('.$in_root_uri_string.') is too old (it is version '.$version.')! It needs to be at least Version 1.8.6!' );
+                } else {
+                    $this->set_m_error_message('__construct: The root server at ('.$in_root_uri_string.') is too old (it is version '.$version.')! It needs to be at least Version 1.8.6!');
                 }
             }
         }
@@ -126,17 +117,13 @@ This array is preset with keys for the available parameters.
  *   NOTE: If the server URI changes, the parameters are flushed.                        *
  ****************************************************************************************/
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function set_m_root_uri( $in_root_uri_string,  /**< A string. The URI to set to the data member.
-    This is set verbatim.
-    Cleaning is performed at recall time.
-     */
-                                     $in_skip_flush = false    ///< Optional. If true, the parameters won't be flushed, even if they need to be.
-    )
-    {
+    public function set_m_root_uri(
+        $in_root_uri_string,        //  A string. The URI to set to the data member. This is set verbatim. Cleaning is performed at recall time.
+        $in_skip_flush = false    ///< Optional. If true, the parameters won't be flushed, even if they need to be.
+    ) {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         // If we are selecting a new server, or changing servers, we flush all stored parameters.
-        if ( !$in_skip_flush && strcmp ( $in_root_uri_string, $this->m_root_uri_string ) )
-        {
+        if (!$in_skip_flush && strcmp($in_root_uri_string, $this->m_root_uri_string)) {
             $this->flush_parameters();
         }
 
@@ -161,21 +148,17 @@ This array is preset with keys for the available parameters.
         $matches = array();
         $uri = '';  // This will be the base URI to the main_server directory.
         // See if we have a protocol preamble. Separate the URI into components.
-        if ( preg_match ( '|^(.*?):\/\/(.*?)/?$|', $ret_string, $matches ) )
-        {
-            $protocol = strtolower ( $matches[1] );
+        if (preg_match('|^(.*?):\/\/(.*?)/?$|', $ret_string, $matches)) {
+            $protocol = strtolower($matches[1]);
             // See if we are a supported protocol.
-            if ( !in_array ( $protocol, $protocols ) )
-            {
+            if (!in_array($protocol, $protocols)) {
                 $protocol = $protocols[0];  // The default protocol is in element zero.
             }
 
             $uri = $matches[2]; // This strips off any trailing slash.
-        }
-        else
-        {
+        } else {
             // Strip off any trailing slash.
-            preg_match ( '|^(.*?)\/?$|', $ret_string, $matches );
+            preg_match('|^(.*?)\/?$|', $ret_string, $matches);
             $uri = $matches[1];
         }
 
@@ -250,7 +233,7 @@ This array is preset with keys for the available parameters.
  *   \returns A reference to an array of mixed.                                          *
  ****************************************************************************************/
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function &get_m_current_transaction ()
+    public function &get_m_current_transaction()
     {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         return $this->m_current_transaction;
@@ -292,46 +275,38 @@ This array is preset with keys for the available parameters.
         $error_message = null;  // We will collect any error messages.
 
         // We start by clearing any internal error message.
-        $this->set_m_error_message ( $error_message );
+        $this->set_m_error_message($error_message);
 
-        if ( $in_force_refresh || !$this->get_m_server_version() )
-        {
+        if ($in_force_refresh || !$this->get_m_server_version()) {
             $uri = $this->get_m_root_uri(); // Get the cleaned URI.
 
             $uri .= '/client_interface/serverInfo.xml'; // We will load the XML file.
 
             // Get the XML data from the remote server. We will use GET.
-            $data = self::call_curl ( $uri, false, $error_message );
+            $data = self::call_curl($uri, false, $error_message);
 
             // Save any internal error message from the transaction.
-            $this->set_m_error_message ( $error_message );
+            $this->set_m_error_message($error_message);
 
             // If we get a valid response, we then parse the XML using the PHP DOMDocument class.
-            if ( !$this->get_m_error_message() && $data )
-            {
+            if (!$this->get_m_error_message() && $data) {
                 $info_file = new DOMDocument;
-                if ( $info_file instanceof DOMDocument )
-                {
-                    if ( @$info_file->loadXML ( $data ) )
-                    {
-                        $has_info = $info_file->getElementsByTagName ( "bmltInfo" );
+                if ($info_file instanceof DOMDocument) {
+                    if (@$info_file->loadXML($data)) {
+                        $has_info = $info_file->getElementsByTagName("bmltInfo");
 
-                        if ( ($has_info instanceof domnodelist) && $has_info->length )
-                        {
+                        if (($has_info instanceof domnodelist) && $has_info->length) {
                             $ret = $has_info->item(0)->nodeValue;
-                            $this->set_m_server_version( $ret );
+                            $this->set_m_server_version($ret);
                         }
                     }
                 }
             }
 
-            if ( !$ret && !$this->get_m_error_message() )
-            {
-                $this->set_m_error_message ( 'get_server_version: Invalid URI ('.$uri.')' );
+            if (!$ret && !$this->get_m_error_message()) {
+                $this->set_m_error_message('get_server_version: Invalid URI ('.$uri.')');
             }
-        }
-        else
-        {
+        } else {
             $ret = $this->get_m_server_version();
         }
 
@@ -360,54 +335,45 @@ This array is preset with keys for the available parameters.
         $error_message = null;  // We will collect any error messages.
 
         // We start by clearing any internal error message.
-        $this->set_m_error_message ( $error_message );
+        $this->set_m_error_message($error_message);
 
-        if ( $in_force_refresh || !is_array ( $this->get_m_outgoing_parameter('langs') ) || !count ( $this->get_m_outgoing_parameter('langs') ) )
-        {
+        if ($in_force_refresh || !is_array($this->get_m_outgoing_parameter('langs')) || !count($this->get_m_outgoing_parameter('langs'))) {
             $uri = $this->get_m_root_uri(); // Get the cleaned URI.
 
             $uri .= '/client_interface/xml/GetLangs.php';   // We will load the XML file.
 
             // Get the XML data from the remote server. We will use GET.
-            $data = self::call_curl ( $uri, false, $error_message );
+            $data = self::call_curl($uri, false, $error_message);
 
             // Save any internal error message from the transaction.
-            $this->set_m_error_message ( $error_message );
+            $this->set_m_error_message($error_message);
 
             // If we get a valid response, we then parse the XML using the PHP DOMDocument class.
-            if ( !$this->get_m_error_message() && $data )
-            {
+            if (!$this->get_m_error_message() && $data) {
                 $info_file = new DOMDocument;
-                if ( $info_file instanceof DOMDocument )
-                {
-                    if ( @$info_file->loadXML ( $data ) )
-                    {
-                        $has_info = $info_file->getElementsByTagName ( "language" );
+                if ($info_file instanceof DOMDocument) {
+                    if (@$info_file->loadXML($data)) {
+                        $has_info = $info_file->getElementsByTagName("language");
 
-                        if ( ($has_info instanceof domnodelist) && $has_info->length )
-                        {
+                        if (($has_info instanceof domnodelist) && $has_info->length) {
                             $ret = array();
 
-                            foreach ( $has_info as $node )
-                            {
+                            foreach ($has_info as $node) {
                                 $value = $node->nodeValue;
                                 $key = $node->getAttribute('key');
                                 $ret[$key]['name'] = $value;
                                 $ret[$key]['default'] = $node->getAttribute('default') ? true : false;
                             }
-                            $this->set_m_outgoing_parameter( 'langs', $ret );
+                            $this->set_m_outgoing_parameter('langs', $ret);
                         }
                     }
                 }
             }
 
-            if ( !$ret && !$this->get_m_error_message() )
-            {
-                $this->set_m_error_message ( 'get_server_langs: Invalid URI ('.$uri.')' );
+            if (!$ret && !$this->get_m_error_message()) {
+                $this->set_m_error_message('get_server_langs: Invalid URI ('.$uri.')');
             }
-        }
-        else
-        {
+        } else {
             $ret = $this->get_m_outgoing_parameter('langs');
         }
 
@@ -433,71 +399,60 @@ This array is preset with keys for the available parameters.
  *   \returns An indexed array containing the change records as associative arrays.      *
  ****************************************************************************************/
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_meeting_changes(  $in_start_date = null,      ///< Optional. If given (a PHP time() format UNIX Epoch time), the changes will be loaded from midnight (00:00:00) of the date of the time.
-                                           $in_end_date = null,        ///< Optional. If given (a PHP time() format UNIX Epoch time), the changes will be loaded until midnight (23:59:59) of the date of the time.
-                                           $in_meeting_id = null,      ///< If supplied, an ID for a particular meeting. Only changes for that meeting will be returned.
-                                           $in_service_body_id = null  ///< If supplied, an ID for a particular Service body. Only changes for meetings within that Service body will be returned.
-    )
-    {
+    public function get_meeting_changes(
+        $in_start_date = null,      ///< Optional. If given (a PHP time() format UNIX Epoch time), the changes will be loaded from midnight (00:00:00) of the date of the time.
+        $in_end_date = null,        ///< Optional. If given (a PHP time() format UNIX Epoch time), the changes will be loaded until midnight (23:59:59) of the date of the time.
+        $in_meeting_id = null,      ///< If supplied, an ID for a particular meeting. Only changes for that meeting will be returned.
+        $in_service_body_id = null  ///< If supplied, an ID for a particular Service body. Only changes for meetings within that Service body will be returned.
+    ) {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         $ret = null;
 
         $error_message = null;  // We will collect any error messages.
 
         // We start by clearing any internal error message.
-        $this->set_m_error_message ( $error_message );
+        $this->set_m_error_message($error_message);
 
         $uri = $this->get_m_root_uri(); // Get the cleaned URI.
 
         $uri .= '/client_interface/xml/index.php?switcher=GetChanges';  // We will load the XML file.
 
-        if ( intval ( $in_start_date ) )
-        {
-            $uri .= '&start_date='.date ( 'Y-m-d', intval ( $in_start_date ) );
+        if (intval($in_start_date)) {
+            $uri .= '&start_date='.date('Y-m-d', intval($in_start_date));
         }
 
-        if ( intval ( $in_end_date ) )
-        {
-            $uri .= '&end_date='.date ( 'Y-m-d', intval ( $in_end_date ) );
+        if (intval($in_end_date)) {
+            $uri .= '&end_date='.date('Y-m-d', intval($in_end_date));
         }
 
-        if ( intval ( $in_meeting_id ) )
-        {
-            $uri .= '&meeting_id='.intval ( $in_meeting_id );
+        if (intval($in_meeting_id)) {
+            $uri .= '&meeting_id='.intval($in_meeting_id);
         }
 
-        if ( intval ( $in_service_body_id ) )
-        {
-            $uri .= '&service_body_id='.intval ( $in_service_body_id );
+        if (intval($in_service_body_id)) {
+            $uri .= '&service_body_id='.intval($in_service_body_id);
         }
 
         // Get the XML data from the remote server. We will use GET.
-        $data = self::call_curl ( $uri, false, $error_message );
+        $data = self::call_curl($uri, false, $error_message);
 
         // Save any internal error message from the transaction.
-        $this->set_m_error_message ( $error_message );
+        $this->set_m_error_message($error_message);
 
         // If we get a valid response, we then parse the XML using the PHP DOMDocument class.
-        if ( !$this->get_m_error_message() && $data )
-        {
+        if (!$this->get_m_error_message() && $data) {
             $info_file = new DOMDocument;
-            if ( $info_file instanceof DOMDocument )
-            {
-                if ( @$info_file->loadXML ( $data ) )
-                {
-                    $has_info = $info_file->getElementsByTagName ( "row" );
+            if ($info_file instanceof DOMDocument) {
+                if (@$info_file->loadXML($data)) {
+                    $has_info = $info_file->getElementsByTagName("row");
 
-                    if ( ($has_info instanceof domnodelist) && $has_info->length )
-                    {
+                    if (($has_info instanceof domnodelist) && $has_info->length) {
                         $ret = array();
 
-                        foreach ( $has_info as $change )
-                        {
-                            if ( $change->hasChildNodes() )
-                            {
+                        foreach ($has_info as $change) {
+                            if ($change->hasChildNodes()) {
                                 $change_ar = array();
-                                foreach ( $change->childNodes as $change_record_elem )
-                                {
+                                foreach ($change->childNodes as $change_record_elem) {
                                     $key = $change_record_elem->nodeName;
                                     $value = $change_record_elem->nodeValue;
                                     $change_ar[$key] = $value;
@@ -506,25 +461,17 @@ This array is preset with keys for the available parameters.
                                 $ret[] = $change_ar;
                             }
                         }
+                    } else {
+                        $this->set_m_error_message('get_meeting_changes: Invalid XML Format ('.$uri.')');
                     }
-                    else
-                    {
-                        $this->set_m_error_message ( 'get_meeting_changes: Invalid XML Format ('.$uri.')' );
-                    }
+                } else {
+                    $this->set_m_error_message('get_meeting_changes: Invalid XML Format ('.$uri.')');
                 }
-                else
-                {
-                    $this->set_m_error_message ( 'get_meeting_changes: Invalid XML Format ('.$uri.')' );
-                }
+            } else {
+                $this->set_m_error_message('get_meeting_changes: Invalid XML Format ('.$uri.')');
             }
-            else
-            {
-                $this->set_m_error_message ( 'get_meeting_changes: Invalid XML Format ('.$uri.')' );
-            }
-        }
-        elseif ( !$this->get_m_error_message() )
-        {
-            $this->set_m_error_message ( 'get_meeting_changes: Invalid URI ('.$uri.')' );
+        } elseif (!$this->get_m_error_message()) {
+            $this->set_m_error_message('get_meeting_changes: Invalid URI ('.$uri.')');
         }
 
         return $ret;
@@ -551,41 +498,33 @@ This array is preset with keys for the available parameters.
         $error_message = null;  // We will collect any error messages.
 
         // We start by clearing any internal error message.
-        $this->set_m_error_message ( $error_message );
+        $this->set_m_error_message($error_message);
 
-        if ( $in_force_refresh || !is_array ( $this->get_m_outgoing_parameter('formats') ) || !count ( $this->get_m_outgoing_parameter('formats') ) )
-        {
+        if ($in_force_refresh || !is_array($this->get_m_outgoing_parameter('formats')) || !count($this->get_m_outgoing_parameter('formats'))) {
             $uri = $this->get_m_root_uri(); // Get the cleaned URI.
 
             $uri .= '/client_interface/xml/index.php?switcher=GetFormats';  // We will load the XML XML.
 
             // Get the XML data from the remote server. We will use GET.
-            $data = self::call_curl ( $uri, false, $error_message );
+            $data = self::call_curl($uri, false, $error_message);
 
             // Save any internal error message from the transaction.
-            $this->set_m_error_message ( $error_message );
+            $this->set_m_error_message($error_message);
 
             // If we get a valid response, we then parse the XML using the PHP DOMDocument class.
-            if ( !$this->get_m_error_message() && $data )
-            {
+            if (!$this->get_m_error_message() && $data) {
                 $info_file = new DOMDocument;
-                if ( $info_file instanceof DOMDocument )
-                {
-                    if ( @$info_file->loadXML ( $data ) )
-                    {
-                        $has_info = $info_file->getElementsByTagName ( "row" );
+                if ($info_file instanceof DOMDocument) {
+                    if (@$info_file->loadXML($data)) {
+                        $has_info = $info_file->getElementsByTagName("row");
 
-                        if ( ($has_info instanceof domnodelist) && $has_info->length )
-                        {
+                        if (($has_info instanceof domnodelist) && $has_info->length) {
                             $ret = array();
 
-                            foreach ( $has_info as $format )
-                            {
-                                if ( $format->hasChildNodes() )
-                                {
+                            foreach ($has_info as $format) {
+                                if ($format->hasChildNodes()) {
                                     $format_ar = array();
-                                    foreach ( $format->childNodes as $format_elem )
-                                    {
+                                    foreach ($format->childNodes as $format_elem) {
                                         $key = $format_elem->nodeName;
                                         $value = $format_elem->nodeValue;
                                         $format_ar[$key] = $value;
@@ -593,30 +532,20 @@ This array is preset with keys for the available parameters.
                                     $ret[$format_ar['id']] = $format_ar;
                                 }
                             }
-                            $this->set_m_outgoing_parameter( 'formats', $ret );
+                            $this->set_m_outgoing_parameter('formats', $ret);
+                        } else {
+                            $this->set_m_error_message('get_server_formats: Invalid XML Format ('.$uri.')');
                         }
-                        else
-                        {
-                            $this->set_m_error_message ( 'get_server_formats: Invalid XML Format ('.$uri.')' );
-                        }
+                    } else {
+                        $this->set_m_error_message('get_server_formats: Invalid XML Format ('.$uri.')');
                     }
-                    else
-                    {
-                        $this->set_m_error_message ( 'get_server_formats: Invalid XML Format ('.$uri.')' );
-                    }
+                } else {
+                    $this->set_m_error_message('get_server_formats: Invalid XML Format ('.$uri.')');
                 }
-                else
-                {
-                    $this->set_m_error_message ( 'get_server_formats: Invalid XML Format ('.$uri.')' );
-                }
+            } elseif (!$this->get_m_error_message()) {
+                $this->set_m_error_message('get_server_formats: Invalid URI ('.$uri.')');
             }
-            elseif ( !$this->get_m_error_message() )
-            {
-                $this->set_m_error_message ( 'get_server_formats: Invalid URI ('.$uri.')' );
-            }
-        }
-        else
-        {
+        } else {
             $ret = $this->get_m_outgoing_parameter('formats');
         }
 
@@ -643,63 +572,47 @@ This array is preset with keys for the available parameters.
         $error_message = null;  // We will collect any error messages.
 
         // We start by clearing any internal error message.
-        $this->set_m_error_message ( $error_message );
+        $this->set_m_error_message($error_message);
 
-        if ( $in_force_refresh || !is_array ( $this->get_m_outgoing_parameter('services') ) || !count ( $this->get_m_outgoing_parameter('services') ) )
-        {
+        if ($in_force_refresh || !is_array($this->get_m_outgoing_parameter('services')) || !count($this->get_m_outgoing_parameter('services'))) {
             $uri = $this->get_m_root_uri(); // Get the cleaned URI.
 
             $uri .= '/client_interface/xml/GetServiceBodies.php';   // We will load the XML file.
 
             // Get the XML data from the remote server. We will use GET.
-            $data = self::call_curl ( $uri, false, $error_message );
+            $data = self::call_curl($uri, false, $error_message);
 
             // Save any internal error message from the transaction.
-            $this->set_m_error_message ( $error_message );
+            $this->set_m_error_message($error_message);
 
             // If we get a valid response, we then parse the XML using the PHP DOMDocument class.
-            if ( !$this->get_m_error_message() && $data )
-            {
+            if (!$this->get_m_error_message() && $data) {
                 $info_file = new DOMDocument;
-                if ( $info_file instanceof DOMDocument )
-                {
-                    if ( @$info_file->loadXML ( $data ) )
-                    {
-                        $has_info = $info_file->getElementsByTagName ( "serviceBodies" );
+                if ($info_file instanceof DOMDocument) {
+                    if (@$info_file->loadXML($data)) {
+                        $has_info = $info_file->getElementsByTagName("serviceBodies");
 
-                        if ( ($has_info instanceof DOMNodeList) && $has_info->length )
-                        {
+                        if (($has_info instanceof DOMNodeList) && $has_info->length) {
                             $sb_node = $has_info->item(0);
-                            if ( $sb_node instanceof DOMElement )
-                            {
-                                foreach ( $sb_node->childNodes as $node )
-                                {
-                                    if ( method_exists ( $node, 'getAttribute' ) )
-                                    {
-                                        $ret[$node->getAttribute('id')] = self::extract_service_body_info ( $node );
+                            if ($sb_node instanceof DOMElement) {
+                                foreach ($sb_node->childNodes as $node) {
+                                    if (method_exists($node, 'getAttribute')) {
+                                        $ret[$node->getAttribute('id')] = self::extract_service_body_info($node);
                                     }
                                 }
                             }
-                            $this->set_m_outgoing_parameter( 'services', $ret );
+                            $this->set_m_outgoing_parameter('services', $ret);
+                        } else {
+                            $this->set_m_error_message('get_server_service_bodies: Invalid XML Format ('.$uri.')');
                         }
-                        else
-                        {
-                            $this->set_m_error_message ( 'get_server_service_bodies: Invalid XML Format ('.$uri.')' );
-                        }
-                    }
-                    else
-                    {
-                        $this->set_m_error_message ( 'get_server_service_bodies: Failed to Load File ('.$uri.')' );
+                    } else {
+                        $this->set_m_error_message('get_server_service_bodies: Failed to Load File ('.$uri.')');
                     }
                 }
+            } elseif (!$this->get_m_error_message()) {
+                $this->set_m_error_message('get_server_service_bodies: Invalid URI ('.$uri.')');
             }
-            elseif ( !$this->get_m_error_message() )
-            {
-                $this->set_m_error_message ( 'get_server_service_bodies: Invalid URI ('.$uri.')' );
-            }
-        }
-        else
-        {
+        } else {
             $ret = $this->get_m_outgoing_parameter('services');
         }
 
@@ -730,60 +643,45 @@ This array is preset with keys for the available parameters.
         $error_message = null;  // We will collect any error messages.
 
         // We start by clearing any internal error message.
-        $this->set_m_error_message ( $error_message );
+        $this->set_m_error_message($error_message);
 
-        if ( $in_force_refresh || !is_array ( $this->get_m_outgoing_parameter('meeting_key') ) || !count ( $this->get_m_outgoing_parameter('meeting_key') ) )
-        {
+        if ($in_force_refresh || !is_array($this->get_m_outgoing_parameter('meeting_key')) || !count($this->get_m_outgoing_parameter('meeting_key'))) {
             $uri = $this->get_m_root_uri(); // Get the cleaned URI.
 
             $uri .= '/client_interface/xsd/GetSearchResults.php';   // We will load the XML file.
 
             // Get the XML data from the remote server. We will use GET.
-            $data = self::call_curl ( $uri, false, $error_message );
+            $data = self::call_curl($uri, false, $error_message);
             // Save any internal error message from the transaction.
-            $this->set_m_error_message ( $error_message );
+            $this->set_m_error_message($error_message);
 
             // If we get a valid response, we then parse the XML using the PHP DOMDocument class.
-            if ( !$this->get_m_error_message() && $data )
-            {
+            if (!$this->get_m_error_message() && $data) {
                 $info_file = new DOMDocument;
-                if ( $info_file instanceof DOMDocument )
-                {
-                    if ( @$info_file->loadXML ( $data ) )
-                    {
-                        $sequence_elements = $info_file->getElementsByTagName ( "sequence" );
+                if ($info_file instanceof DOMDocument) {
+                    if (@$info_file->loadXML($data)) {
+                        $sequence_elements = $info_file->getElementsByTagName("sequence");
                         $sequence_element = $sequence_elements->item(1);
                         // We now have the XSD sequence element that is the immediate container for the meeting_key items
-                        if ( $sequence_element instanceof DOMElement )
-                        {
-                            foreach ( $sequence_element->childNodes as $sb_node )
-                            {
-                                if ( method_exists ( $sb_node, 'getAttribute' ) && $sb_node->getAttribute ( 'name' ) )
-                                {
-                                    $ret[] = $sb_node->getAttribute ( 'name' );
+                        if ($sequence_element instanceof DOMElement) {
+                            foreach ($sequence_element->childNodes as $sb_node) {
+                                if (method_exists($sb_node, 'getAttribute') && $sb_node->getAttribute('name')) {
+                                    $ret[] = $sb_node->getAttribute('name');
                                 }
                             }
 
                             $this->set_m_outgoing_parameter('meeting_key', $ret);
+                        } else {
+                            $this->set_m_error_message('get_server_meeting_keys: Invalid XML Format ('.$uri.')');
                         }
-                        else
-                        {
-                            $this->set_m_error_message ( 'get_server_meeting_keys: Invalid XML Format ('.$uri.')' );
-                        }
-                    }
-                    else
-                    {
-                        $this->set_m_error_message ( 'get_server_service_bodies: Failed to Load File ('.$uri.')' );
+                    } else {
+                        $this->set_m_error_message('get_server_service_bodies: Failed to Load File ('.$uri.')');
                     }
                 }
+            } elseif (!$this->get_m_error_message()) {
+                $this->set_m_error_message('get_server_meeting_keys: Invalid URI ('.$uri.')');
             }
-            elseif ( !$this->get_m_error_message() )
-            {
-                $this->set_m_error_message ( 'get_server_meeting_keys: Invalid URI ('.$uri.')' );
-            }
-        }
-        else
-        {
+        } else {
             $ret = $this->get_m_outgoing_parameter('meeting_key');
         }
 
@@ -806,22 +704,18 @@ This array is preset with keys for the available parameters.
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         $ret = null;
 
-        $this->set_m_error_message ( null );    // Clear the error message.
+        $this->set_m_error_message(null);    // Clear the error message.
 
-        if ( $this->is_legal_transaction_key ( $in_parameter_key ) )
-        {
+        if ($this->is_legal_transaction_key($in_parameter_key)) {
             // We start by getting a reference to the outgoing parameters array.
             $outgoing_parameters =& $this->get_m_outgoing_parameters();
 
             // We only respond with keys if the parameter value is a non-empty array.
-            if ( is_array ( $outgoing_parameters[$in_parameter_key] ) && count ( $outgoing_parameters[$in_parameter_key] ) )
-            {
+            if (is_array($outgoing_parameters[$in_parameter_key]) && count($outgoing_parameters[$in_parameter_key])) {
                 $ret = $outgoing_parameters[$in_parameter_key];
             }
-        }
-        else
-        {
-            $this->set_m_error_message ( 'get_transaction_key_values: Invalid Parameter Key: "'.$in_parameter_key.'"' );
+        } else {
+            $this->set_m_error_message('get_transaction_key_values: Invalid Parameter Key: "'.$in_parameter_key.'"');
         }
 
         return $ret;
@@ -833,19 +727,18 @@ This array is preset with keys for the available parameters.
  *   \returns A Boolean. True if it is legal, false, otherwise.                          *
  ****************************************************************************************/
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function is_legal_transaction_key( $in_parameter_key,  ///< A string. The key for this parameter.
-                                        $in_sub_key = null  ///< Optional. If this is a meeting_key value, see if it is legal. Ignored, otherwise.
-    )
-    {
+    public function is_legal_transaction_key(
+        $in_parameter_key,  ///< A string. The key for this parameter.
+        $in_sub_key = null  ///< Optional. If this is a meeting_key value, see if it is legal. Ignored, otherwise.
+    ) {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         // We start by getting a reference to the outgoing parameters array.
         $legal_entities =& $this->get_m_outgoing_parameters();
 
-        $ret = array_key_exists ( $in_parameter_key, $legal_entities );
+        $ret = array_key_exists($in_parameter_key, $legal_entities);
 
-        if ( ($in_parameter_key == 'meeting_key') && isset ( $in_sub_key ) )
-        {
-            $ret = $ret && array_key_exists ( $in_sub_key, $legal_entities[$in_parameter_key] );
+        if (($in_parameter_key == 'meeting_key') && isset($in_sub_key)) {
+            $ret = $ret && array_key_exists($in_sub_key, $legal_entities[$in_parameter_key]);
         }
 
         return $ret;
@@ -859,26 +752,23 @@ This array is preset with keys for the available parameters.
  *   \returns A Boolean. True if it is OK, false, otherwise.                             *
  ****************************************************************************************/
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function set_current_transaction_parameter(    $in_parameter_key,          ///< A string. The key for this parameter. If there is one already set, this will overwrite that.
-                                                    $in_parameter_value = null  ///< Mixed. It can be any value. If an array, then the value will be presented as multiple values.
-    )
-    {
+    public function set_current_transaction_parameter(
+        $in_parameter_key,          ///< A string. The key for this parameter. If there is one already set, this will overwrite that.
+        $in_parameter_value = null  ///< Mixed. It can be any value. If an array, then the value will be presented as multiple values.
+    ) {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         $ret = false;
 
-        $this->set_m_error_message ( null );    // Clear the error message.
+        $this->set_m_error_message(null);    // Clear the error message.
 
-        if ( $this->is_legal_transaction_key ( $in_parameter_key, $in_parameter_value ) )
-        {
+        if ($this->is_legal_transaction_key($in_parameter_key, $in_parameter_value)) {
             // We start by getting a reference to our transaction array.
             $transaction_array =& $this->get_m_current_transaction();
 
             $transaction_array[$in_parameter_key] = $in_parameter_value;
             $ret = true;
-        }
-        else
-        {
-            $this->set_m_error_message ( 'set_current_transaction_parameter: Invalid Parameter Key: "'.$in_parameter_key.'"' );
+        } else {
+            $this->set_m_error_message('set_current_transaction_parameter: Invalid Parameter Key: "'.$in_parameter_key.'"');
         }
 
         return $ret;
@@ -900,32 +790,23 @@ This array is preset with keys for the available parameters.
  *   \returns A reference to a mixed. This is the value in the array.                    *
  ****************************************************************************************/
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function &get_m_outgoing_parameter ($in_parameter_key_string,                   ///< A string. The parameter key
-                                        $in_parameter_secondary_key_string = null   ///< If the parameter has an embedded array, a key for that (optional)
-    )
-    {
+    public function &get_m_outgoing_parameter(
+        $in_parameter_key_string,                   ///< A string. The parameter key
+        $in_parameter_secondary_key_string = null   ///< If the parameter has an embedded array, a key for that (optional)
+    ) {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         $ret = null;
 
-        if ( !isset ( $this->m_outgoing_parameters[$in_parameter_key_string] ) )
-        {
-            $this->set_m_error_message ( 'get_m_outgoing_parameter: Invalid Key: "'.$in_parameter_key_string.'"' );
-        }
-        else
-        {
-            if ( isset ( $in_parameter_secondary_key_string ) )
-            {
-                if ( !isset ( $this->m_outgoing_parameters[$in_parameter_key_string][$in_parameter_secondary_key_string] ) )
-                {
-                    $this->set_m_error_message ( 'get_m_outgoing_parameter: Invalid Secondary Key: "'.$in_parameter_secondary_key_string.'"' );
-                }
-                else
-                {
+        if (!isset($this->m_outgoing_parameters[$in_parameter_key_string])) {
+            $this->set_m_error_message('get_m_outgoing_parameter: Invalid Key: "'.$in_parameter_key_string.'"');
+        } else {
+            if (isset($in_parameter_secondary_key_string)) {
+                if (!isset($this->m_outgoing_parameters[$in_parameter_key_string][$in_parameter_secondary_key_string])) {
+                    $this->set_m_error_message('get_m_outgoing_parameter: Invalid Secondary Key: "'.$in_parameter_secondary_key_string.'"');
+                } else {
                     $ret =& $this->m_outgoing_parameters[$in_parameter_key_string][$in_parameter_secondary_key_string];
                 }
-            }
-            else
-            {
+            } else {
                 $ret =& $this->m_outgoing_parameters[$in_parameter_key_string];
             }
         }
@@ -942,25 +823,21 @@ This array is preset with keys for the available parameters.
  *   This will set or clear the internal $m_error_message data member.                   *
  ****************************************************************************************/
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function set_m_outgoing_parameter( $in_parameter_key_string,   ///< A string. The parameter key
-                                        $in_parameter_value_mixed   ///< A mixed value
-    )
-    {
+    public function set_m_outgoing_parameter(
+        $in_parameter_key_string,   ///< A string. The parameter key
+        $in_parameter_value_mixed   ///< A mixed value
+    ) {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         // We start by clearing any internal error message.
-        $this->set_m_error_message ( null );
+        $this->set_m_error_message(null);
 
-        if ( isset ( $this->m_outgoing_parameters[$in_parameter_key_string] ) )
-        {   // Null is not allowed.
-            if ( $in_parameter_value_mixed === null )
-            {
+        if (isset($this->m_outgoing_parameters[$in_parameter_key_string])) {   // Null is not allowed.
+            if ($in_parameter_value_mixed === null) {
                 $in_parameter_value_mixed = '';
             }
             $this->m_outgoing_parameters[$in_parameter_key_string] = $in_parameter_value_mixed;
-        }
-        else
-        {
-            $this->set_m_error_message ( 'set_m_outgoing_parameter: Invalid Key: "'.$in_parameter_key_string.'"' );
+        } else {
+            $this->set_m_error_message('set_m_outgoing_parameter: Invalid Key: "'.$in_parameter_key_string.'"');
         }
     }
 
@@ -1042,7 +919,7 @@ This array is preset with keys for the available parameters.
     public function flush_parameters()
     {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-        $this->set_m_server_version ( null );
+        $this->set_m_server_version(null);
         $this->set_m_current_transaction(null);
         $this->set_default_outgoing();
         $this->clear_m_error_message();
@@ -1065,14 +942,11 @@ This array is preset with keys for the available parameters.
         $this->set_m_outgoing_parameter('langs', array());
         // Now, we get the values from the server.
         $this->get_server_formats();
-        if ( !$this->get_m_error_message() )
-        {
+        if (!$this->get_m_error_message()) {
             $this->get_server_langs();
-            if ( !$this->get_m_error_message() )
-            {
+            if (!$this->get_m_error_message()) {
                 $this->get_server_service_bodies();
-                if ( !$this->get_m_error_message() )
-                {
+                if (!$this->get_m_error_message()) {
                     $this->get_server_meeting_keys();
                 }
             }
@@ -1094,7 +968,7 @@ This array is preset with keys for the available parameters.
         $error_message = null;  // We will collect any error messages.
 
         // We start by clearing any internal error message.
-        $this->set_m_error_message ( $error_message );
+        $this->set_m_error_message($error_message);
 
         $uri = $this->get_m_root_uri(); // Get the cleaned URI.
 
@@ -1103,60 +977,48 @@ This array is preset with keys for the available parameters.
 
         $serialized_list = null;
 
-        if ( $transaction_params = $this->build_transaction_parameter_list($serialized_list) )
-        {
+        if ($transaction_params = $this->build_transaction_parameter_list($serialized_list)) {
             $uri .= $transaction_params;
         }
         // Get the XML data from the remote server. We will use GET.
-        $data = self::call_curl ( $uri, false, $error_message );
+        $data = self::call_curl($uri, false, $error_message);
 
         $ret['uri'] = $uri;
         $ret['serialized'] = $serialized_list;
 
         // Save any internal error message from the transaction.
-        $this->set_m_error_message ( $error_message );
+        $this->set_m_error_message($error_message);
 
         // If we get a valid response, we then parse the XML using the PHP DOMDocument class.
-        if ( !$this->get_m_error_message() && $data )
-        {
+        if (!$this->get_m_error_message() && $data) {
             // We now have a whole bunch of meetings. Time to process the response, and turn it into usable data.
             $info_file = new DOMDocument;
-            if ( $info_file instanceof DOMDocument )
-            {
-                if ( @$info_file->loadXML ( $data ) )
-                {
+            if ($info_file instanceof DOMDocument) {
+                if (@$info_file->loadXML($data)) {
                     // OK. We have our meeting data in a DOMDocument. Time to start rockin' and' rollin'...
 
                     // Get each of the meeting elements. This will create a DOMNodeList
-                    $meeting_elements = $info_file->getElementsByTagName ( "row" );
+                    $meeting_elements = $info_file->getElementsByTagName("row");
 
-                    if ( $meeting_elements instanceof DOMNodeList )
-                    {
-                        foreach ( $meeting_elements as $meeting )
-                        {
-                            if ( $meeting instanceof DOMNode )
-                            {
+                    if ($meeting_elements instanceof DOMNodeList) {
+                        foreach ($meeting_elements as $meeting) {
+                            if ($meeting instanceof DOMNode) {
                                 // Turn the DOMNode into an associative array.
-                                $node = self::extract_meeting_data ( $meeting );
+                                $node = self::extract_meeting_data($meeting);
                                 // Needs to be a valid meeting.
-                                if ( $node )
-                                {
+                                if ($node) {
                                     // We save each meeting in an element with its ID as the key.
                                     $ret['meetings'][] = $node;
                                 }
                             }
                         }
                     }
-                }
-                else
-                {
-                    $this->set_m_error_message ( 'meeting_search: Failed to Load File ('.$uri.')' );
+                } else {
+                    $this->set_m_error_message('meeting_search: Failed to Load File ('.$uri.')');
                 }
             }
-        }
-        elseif ( !$this->get_m_error_message() )
-        {
-            $this->set_m_error_message ( 'meeting_search: Invalid URI ('.$uri.')' );
+        } elseif (!$this->get_m_error_message()) {
+            $this->set_m_error_message('meeting_search: Invalid URI ('.$uri.')');
         }
 
         return $ret;
@@ -1181,19 +1043,14 @@ This array is preset with keys for the available parameters.
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         $ret = null;
 
-        $new_array = unserialize ( $in_serialized_list );
-        if ( isset ( $new_array ) && is_array ( $new_array ) && count ( $new_array ) )
-        {
+        $new_array = unserialize($in_serialized_list);
+        if (isset($new_array) && is_array($new_array) && count($new_array)) {
             $ret = array();
             $this->set_m_current_transaction(null); // Clear current transactions.
-            foreach ( $new_array as $param_key => $param_value )
-            {
-                if ( $this->is_legal_transaction_key ( $param_key, $param_value ) )
-                {
-                    $this->set_current_transaction_parameter ( $param_key, $param_value );
-                }
-                else
-                {
+            foreach ($new_array as $param_key => $param_value) {
+                if ($this->is_legal_transaction_key($param_key, $param_value)) {
+                    $this->set_current_transaction_parameter($param_key, $param_value);
+                } else {
                     $ret[] = $param_key;
                 }
             }
@@ -1212,7 +1069,7 @@ This array is preset with keys for the available parameters.
     public function get_serialized_transaction()
     {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-        return serialize ( $this->get_m_current_transaction() );
+        return serialize($this->get_m_current_transaction());
     }
 
     /************************************************************************************//**
@@ -1229,47 +1086,33 @@ This array is preset with keys for the available parameters.
 
         $transaction_array =& $this->get_m_current_transaction();
 
-        if ( is_array ( $transaction_array ) && count ( $transaction_array ) )
-        {
-            foreach ( $transaction_array as $param_key => &$param_value )
-            {
-                if ( $this->is_legal_transaction_key ( $param_key, $param_value ) )
-                {
-                    if ( is_array ( $transaction_array[$param_key] ) && (count ( $transaction_array[$param_key] ) > 1) )
-                    {
-                        foreach ( $transaction_array[$param_key] as $param )
-                        {
+        if (is_array($transaction_array) && count($transaction_array)) {
+            foreach ($transaction_array as $param_key => &$param_value) {
+                if ($this->is_legal_transaction_key($param_key, $param_value)) {
+                    if (is_array($transaction_array[$param_key]) && (count($transaction_array[$param_key]) > 1)) {
+                        foreach ($transaction_array[$param_key] as $param) {
                             $ret .= '&';
-                            if ( $param === true )  // Boolean is converted to a "1"
-                            {
+                            if ($param === true) {  // Boolean is converted to a "1"
                                 $param = 1;
                             }
-                            $ret .= $param_key.'[]='.urlencode ( trim ( strval ( $param ) ) );
+                            $ret .= $param_key.'[]='.urlencode(trim(strval($param)));
                         }
-                    }
-                    elseif ( (is_array ( $transaction_array[$param_key] ) && (count ( $transaction_array[$param_key] ) == 1)) || (!is_array ( $transaction_array[$param_key] ) && isset ( $transaction_array[$param_key] )) )
-                    {
+                    } elseif ((is_array($transaction_array[$param_key]) && (count($transaction_array[$param_key]) == 1)) || (!is_array($transaction_array[$param_key]) && isset($transaction_array[$param_key]))) {
                         $ret .= '&';
                         $param = $transaction_array[$param_key];
-                        if ( is_array ( $param ) )
-                        {
+                        if (is_array($param)) {
                             $param = $param[0];
                         }
-                        if ( $param === true )  // Boolean is converted to a "1"
-                        {
+                        if ($param === true) {  // Boolean is converted to a "1"
                             $param = 1;
                         }
-                        $ret .= $param_key.'='.urlencode ( trim ( strval ( $param ) ) );
-                    }
-                    else
-                    {
-                        $this->set_m_error_message ( 'build_transaction_parameter_list: Invalid Parameter Value: "'.$param_value.'" ('.$param_key.')' );
+                        $ret .= $param_key.'='.urlencode(trim(strval($param)));
+                    } else {
+                        $this->set_m_error_message('build_transaction_parameter_list: Invalid Parameter Value: "'.$param_value.'" ('.$param_key.')');
                         break;
                     }
-                }
-                else
-                {
-                    $this->set_m_error_message ( 'build_transaction_parameter_list: Invalid Parameter Key: "'.$param_key.'"' );
+                } else {
+                    $this->set_m_error_message('build_transaction_parameter_list: Invalid Parameter Key: "'.$param_key.'"');
                     break;
                 }
             }
@@ -1322,13 +1165,10 @@ This array is preset with keys for the available parameters.
         $ret['type'] = $type;
         $ret['uri'] = $uri;
         $ret['kmluri'] = $kmluri;
-        if ( $in_dom_node->hasChildNodes() )
-        {
-            foreach ( $in_dom_node->childNodes as $sb_node )
-            {
-                if ( method_exists ( $sb_node, 'getAttribute' ) && $sb_node->getAttribute('id') )
-                {
-                    $ret['children'][$sb_node->getAttribute('id')] = self::extract_service_body_info ( $sb_node );
+        if ($in_dom_node->hasChildNodes()) {
+            foreach ($in_dom_node->childNodes as $sb_node) {
+                if (method_exists($sb_node, 'getAttribute') && $sb_node->getAttribute('id')) {
+                    $ret['children'][$sb_node->getAttribute('id')] = self::extract_service_body_info($sb_node);
                 }
             }
         }
@@ -1341,16 +1181,14 @@ This array is preset with keys for the available parameters.
  *   \returns An associative array, with all the meeting data.                           *
  ****************************************************************************************/
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    static private function extract_meeting_data( $in_meeting_node  ///< The DOMNode for one meeting, extracted from XML.
+    private static function extract_meeting_data( $in_meeting_node  ///< The DOMNode for one meeting, extracted from XML.
     )
     {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         $ret = null;
 
-        if ( $in_meeting_node->hasChildNodes() )
-        {
-            foreach ( $in_meeting_node->childNodes as $node )
-            {
+        if ($in_meeting_node->hasChildNodes()) {
+            foreach ($in_meeting_node->childNodes as $node) {
                 $key = $node->nodeName;
                 $value = $node->nodeValue;
                 $ret[$key] = $value;
@@ -1367,34 +1205,28 @@ This array is preset with keys for the available parameters.
  *   \returns a string, containing the response. Null if the call fails to get any data. *
  ****************************************************************************************/
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public static function call_curl( $in_uri,                ///< A string. The URI to call.
-                                $in_post = false,       ///< If false, the transaction is a GET, not a POST. Default is true.
-                                &$error_message = null, ///< A string. If provided, any error message will be placed here.
-                                &$http_status = null    ///< Optional reference to a string. Returns the HTTP call status.
-    )
-    {
+    public static function call_curl(
+        $in_uri,                ///< A string. The URI to call.
+        $in_post = false,       ///< If false, the transaction is a GET, not a POST. Default is true.
+        &$error_message = null, ///< A string. If provided, any error message will be placed here.
+        &$http_status = null    ///< Optional reference to a string. Returns the HTTP call status.
+    ) {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         $ret = null;
 
         // Make sure we don't give any false positives.
-        if ( $error_message )
-        {
+        if ($error_message) {
             $error_message = null;
         }
 
-        if ( !extension_loaded ( 'curl' ) ) // Must have cURL.
-        {
-            // If there is no error message variable passed, we die quietly.
-            if ( isset ( $error_message ) )
-            {
+        if (!extension_loaded('curl')) { // Must have cURL.
+        // If there is no error message variable passed, we die quietly.
+            if (isset($error_message)) {
                 $error_message = 'call_curl: The cURL extension is not available! This code will not work on this server!';
             }
-        }
-        else
-        {
+        } else {
             // This gets the session as a cookie.
-            if (isset ( $_COOKIE['PHPSESSID'] ) && $_COOKIE['PHPSESSID'] )
-            {
+            if (isset($_COOKIE['PHPSESSID']) && $_COOKIE['PHPSESSID']) {
                 $strCookie = 'PHPSESSID=' . $_COOKIE['PHPSESSID'] . '; path=/';
 
                 session_write_close();
@@ -1403,20 +1235,17 @@ This array is preset with keys for the available parameters.
             // Create a new cURL resource.
             $resource = curl_init();
 
-            if ( isset ( $strCookie ) && $strCookie )
-            {
-                curl_setopt ( $resource, CURLOPT_COOKIE, $strCookie );
+            if (isset($strCookie) && $strCookie) {
+                curl_setopt($resource, CURLOPT_COOKIE, $strCookie);
             }
 
             // If we will be POSTing this transaction, we split up the URI.
-            if ( $in_post )
-            {
-                curl_setopt ( $resource, CURLOPT_POST, true );
+            if ($in_post) {
+                curl_setopt($resource, CURLOPT_POST, true);
 
-                $spli = explode ( "?", $in_uri, 2 );
+                $spli = explode("?", $in_uri, 2);
 
-                if ( is_array ( $spli ) &&  (1 < count ( $spli )) )
-                {
+                if (is_array($spli) &&  (1 < count($spli))) {
                     $in_uri = $spli[0];
                     $in_params = $spli[1];
                     // Convert query string into an array using parse_str(). parse_str() will decode values along the way.
@@ -1427,74 +1256,68 @@ This array is preset with keys for the available parameters.
                     // thus giving them and empty value.
                     $in_params = http_build_query($temp);
 
-                    curl_setopt ( $resource, CURLOPT_POSTFIELDS, $in_params );
+                    curl_setopt($resource, CURLOPT_POSTFIELDS, $in_params);
                 }
             }
 
-            if ( isset ( $strCookie ) && $strCookie )
-            {
-                curl_setopt ( $resource, CURLOPT_COOKIE, $strCookie );
+            if (isset($strCookie) && $strCookie) {
+                curl_setopt($resource, CURLOPT_COOKIE, $strCookie);
             }
 
             // Set url to call.
-            curl_setopt ( $resource, CURLOPT_URL, $in_uri );
+            curl_setopt($resource, CURLOPT_URL, $in_uri);
 
             // Make curl_exec() function (see below) return requested content as a string (unless call fails).
-            curl_setopt ( $resource, CURLOPT_RETURNTRANSFER, true );
+            curl_setopt($resource, CURLOPT_RETURNTRANSFER, true);
 
             // By default, cURL prepends response headers to string returned from call to curl_exec().
             // You can control this with the below setting.
             // Setting it to false will remove headers from beginning of string.
             // If you WANT the headers, see the Yahoo documentation on how to parse with them from the string.
-            curl_setopt ( $resource, CURLOPT_HEADER, false );
+            curl_setopt($resource, CURLOPT_HEADER, false);
 
             // Allow  cURL to follow any 'location:' headers (redirection) sent by server (if needed set to true, else false- defaults to false anyway).
 // Disabled, because some servers disable this for security reasons.
 //          curl_setopt ( $resource, CURLOPT_FOLLOWLOCATION, true );
 
             // Set maximum times to allow redirection (use only if needed as per above setting. 3 is sort of arbitrary here).
-            curl_setopt ( $resource, CURLOPT_MAXREDIRS, 3 );
+            curl_setopt($resource, CURLOPT_MAXREDIRS, 3);
 
             // Set connection timeout in seconds (very good idea).
-            curl_setopt ( $resource, CURLOPT_CONNECTTIMEOUT, 10 );
+            curl_setopt($resource, CURLOPT_CONNECTTIMEOUT, 10);
 
             // Direct cURL to send request header to server allowing compressed content to be returned and decompressed automatically (use only if needed).
-            curl_setopt ( $resource, CURLOPT_ENCODING, 'gzip,deflate' );
+            curl_setopt($resource, CURLOPT_ENCODING, 'gzip,deflate');
 
             // Pretend we're a browser, so that anti-cURL settings don't pooch us.
-            curl_setopt ( $resource, CURLOPT_USERAGENT, "cURL Mozilla/5.0 (Windows NT 5.1; rv:21.0) Gecko/20130401 Firefox/21.0" );
+            curl_setopt($resource, CURLOPT_USERAGENT, "cURL Mozilla/5.0 (Windows NT 5.1; rv:21.0) Gecko/20130401 Firefox/21.0");
 
             // Trust meeeee...
-            curl_setopt ( $resource, CURLOPT_SSL_VERIFYPEER, FALSE);
+            curl_setopt($resource, CURLOPT_SSL_VERIFYPEER, false);
 
             // Execute cURL call and return results in $content variable.
-            $content = curl_exec ( $resource );
+            $content = curl_exec($resource);
 
             // Check if curl_exec() call failed (returns false on failure) and handle failure.
-            if ( $content === false )
-            {
+            if ($content === false) {
                 // If there is no error message variable passed, we die quietly.
-                if ( isset ( $error_message ) )
-                {
+                if (isset($error_message)) {
                     // Cram as much info into the error message as possible.
-                    $error_message = "call_curl: curl failure calling $in_uri, ".curl_error ( $resource )."\n".curl_errno ( $resource );
+                    $error_message = "call_curl: curl failure calling $in_uri, ".curl_error($resource)."\n".curl_errno($resource);
                 }
-            }
-            else
-            {
+            } else {
                 // Do what you want with returned content (e.g. HTML, XML, etc) here or AFTER curl_close() call below as it is stored in the $content variable.
 
                 // You MIGHT want to get the HTTP status code returned by server (e.g. 200, 400, 500).
                 // If that is the case then this is how to do it.
-                $http_status = curl_getinfo ($resource, CURLINFO_HTTP_CODE );
+                $http_status = curl_getinfo($resource, CURLINFO_HTTP_CODE);
             }
 
             // Close cURL and free resource.
-            curl_close ( $resource );
+            curl_close($resource);
 
             // Maybe echo $contents of $content variable here.
-            if ( $content !== false )
-            {
+            if ($content !== false) {
                 $ret = $content;
             }
         }
@@ -1502,5 +1325,3 @@ This array is preset with keys for the available parameters.
         return $ret;
     }
 }
-?>
-
