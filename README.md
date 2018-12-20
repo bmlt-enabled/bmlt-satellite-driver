@@ -37,6 +37,10 @@ This class is used in all of the current CMS satellite classes, via [the BMLT Sa
 
 CHANGELIST
 ----------
+***Version 1.0.20* ** *- UNRELEASED*
+
+- Cleaned up code, Added linting to travis.
+
 ***Version 1.0.19* ** *- October 31, 2018*
 
 - Adding composer.json file to allow this to be pulled in to other projects easier.
