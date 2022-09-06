@@ -77,8 +77,7 @@ This array is preset with keys for the available parameters.
  *   loads up the standard outgoing parameters.                                          *
  *   This object requires that the server be of version 1.8.6 or greater.                *
  ****************************************************************************************/
-    public function __construct(  $in_root_uri_string = null  ///< The URI to the root server, can be null
-    )
+    public function __construct($in_root_uri_string = null)  ///< The URI to the root server, can be null
     {
         if ($in_root_uri_string) {
             // Don't need to flush the params, as we'll be doing that next.
@@ -174,8 +173,7 @@ This array is preset with keys for the available parameters.
  *   \brief Accessor -Set the server version.                                            *
  ****************************************************************************************/
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    private function set_m_server_version( $in_version ///< A string. The version information.
-    )
+    private function set_m_server_version($in_version) ///< A string. The version information.
     {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         $this->m_server_version = $in_version;
@@ -197,8 +195,7 @@ This array is preset with keys for the available parameters.
  *   \brief Accessor -Set the class error message.                                       *
  ****************************************************************************************/
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    private function set_m_error_message( $in_error_message    ///< A string. The error message.
-    )
+    private function set_m_error_message($in_error_message)   ///< A string. The error message.
     {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         $this->m_error_message = $in_error_message;
@@ -220,8 +217,7 @@ This array is preset with keys for the available parameters.
  *   \brief Accessor -Set the class transaction "bucket"                                 *
  ****************************************************************************************/
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    private function set_m_current_transaction( $in_current_transaction    ///< An array of mixed.
-    )
+    private function set_m_current_transaction($in_current_transaction)   ///< An array of mixed.
     {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         $this->m_current_transaction = $in_current_transaction;
@@ -266,8 +262,7 @@ This array is preset with keys for the available parameters.
  *   \returns A string, containing the server version. Null if the test fails.           *
  ****************************************************************************************/
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_server_version( $in_force_refresh = false ///< If this is true, then the server will be queried, even if there is a cache.
-    )
+    public function get_server_version($in_force_refresh = false) ///< If this is true, then the server will be queried, even if there is a cache.
     {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         $ret = null;
@@ -280,15 +275,15 @@ This array is preset with keys for the available parameters.
         if ($in_force_refresh || !$this->get_m_server_version()) {
             $uri = $this->get_m_root_uri(); // Get the cleaned URI.
 
-            $uri .= '/client_interface/json/?switcher=GetServerInfo'; // We will load the XML file.
+            $uri .= '/client_interface/json/?switcher=GetServerInfo'; // We will load the JSON.
 
-            // Get the XML data from the remote server. We will use GET.
+            // Get the JSON data from the remote server. We will use GET.
             $data = self::call_curl($uri, false, $error_message);
 
             // Save any internal error message from the transaction.
             $this->set_m_error_message($error_message);
 
-            // If we get a valid response, we then parse the XML using the PHP DOMDocument class.
+            // If we get a valid response, we then parse the JSON.
             if (!$this->get_m_error_message() && $data) {
                 $info = json_decode($data, true);
                 $ret = $info[0]["version"];
@@ -318,8 +313,7 @@ This array is preset with keys for the available parameters.
  *   name of the language, and a "default" if this is the server's "native" language).   *
  ****************************************************************************************/
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_server_langs( $in_force_refresh = false   ///< If this is true, then the server will be queried, even if there is a cache.
-    )
+    public function get_server_langs($in_force_refresh = false)  ///< If this is true, then the server will be queried, even if there is a cache.
     {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         $ret = null;
@@ -332,34 +326,26 @@ This array is preset with keys for the available parameters.
         if ($in_force_refresh || !is_array($this->get_m_outgoing_parameter('langs')) || !count($this->get_m_outgoing_parameter('langs'))) {
             $uri = $this->get_m_root_uri(); // Get the cleaned URI.
 
-            $uri .= '/client_interface/xml/GetLangs.php';   // We will load the XML file.
+            $uri .= '/client_interface/json/?switcher=GetServerInfo';   // We will load the JSON.
 
-            // Get the XML data from the remote server. We will use GET.
+            // Get the JSON data from the remote server. We will use GET.
             $data = self::call_curl($uri, false, $error_message);
 
             // Save any internal error message from the transaction.
             $this->set_m_error_message($error_message);
 
-            // If we get a valid response, we then parse the XML using the PHP DOMDocument class.
+            // If we get a valid response, we then parse the JSON.
             if (!$this->get_m_error_message() && $data) {
-                $info_file = new DOMDocument;
-                if ($info_file instanceof DOMDocument) {
-                    if (@$info_file->loadXML($data)) {
-                        $has_info = $info_file->getElementsByTagName("language");
+                $ret = array();
 
-                        if (($has_info instanceof domnodelist) && $has_info->length) {
-                            $ret = array();
-
-                            foreach ($has_info as $node) {
-                                $value = $node->nodeValue;
-                                $key = $node->getAttribute('key');
-                                $ret[$key]['name'] = $value;
-                                $ret[$key]['default'] = $node->getAttribute('default') ? true : false;
-                            }
-                            $this->set_m_outgoing_parameter('langs', $ret);
-                        }
-                    }
+                $data = json_decode($data, true);
+                $langs = explode(",", $data[0]["langs"]);
+                $default_lang = $data[0]["nativeLang"];
+                foreach ($langs as $lang) {
+                    $ret[$lang]['name'] = $lang;
+                    $ret[$lang]['default'] = $lang === $default_lang ? true : false;
                 }
+                $this->set_m_outgoing_parameter('langs', $ret);
             }
 
             if (!$ret && !$this->get_m_error_message()) {
@@ -407,7 +393,7 @@ This array is preset with keys for the available parameters.
 
         $uri = $this->get_m_root_uri(); // Get the cleaned URI.
 
-        $uri .= '/client_interface/xml/index.php?switcher=GetChanges';  // We will load the XML file.
+        $uri .= '/client_interface/json/?switcher=GetChanges';  // We will load the JSON data.
 
         if (intval($in_start_date)) {
             $uri .= '&start_date='.date('Y-m-d', intval($in_start_date));
@@ -425,42 +411,22 @@ This array is preset with keys for the available parameters.
             $uri .= '&service_body_id='.intval($in_service_body_id);
         }
 
-        // Get the XML data from the remote server. We will use GET.
+        // Get the JSON data from the remote server. We will use GET.
         $data = self::call_curl($uri, false, $error_message);
 
         // Save any internal error message from the transaction.
         $this->set_m_error_message($error_message);
 
-        // If we get a valid response, we then parse the XML using the PHP DOMDocument class.
+        // If we get a valid response, we then parse the JSON.
         if (!$this->get_m_error_message() && $data) {
             $info_file = new DOMDocument;
-            if ($info_file instanceof DOMDocument) {
-                if (@$info_file->loadXML($data)) {
-                    $has_info = $info_file->getElementsByTagName("row");
-
-                    if (($has_info instanceof domnodelist) && $has_info->length) {
-                        $ret = array();
-
-                        foreach ($has_info as $change) {
-                            if ($change->hasChildNodes()) {
-                                $change_ar = array();
-                                foreach ($change->childNodes as $change_record_elem) {
-                                    $key = $change_record_elem->nodeName;
-                                    $value = $change_record_elem->nodeValue;
-                                    $change_ar[$key] = $value;
-                                }
-
-                                $ret[] = $change_ar;
-                            }
-                        }
-                    } else {
-                        $this->set_m_error_message('get_meeting_changes: Invalid XML Format ('.$uri.')');
-                    }
-                } else {
-                    $this->set_m_error_message('get_meeting_changes: Invalid XML Format ('.$uri.')');
+            if ($data && $data !== '{}' && $data !== '[]') {
+                $ret = array();
+                $data = json_decode($data, true);
+                foreach ($data as $key => $value) {
+                    $ret[$key] = $value;
+                    $ret[$key]["json_data"] = json_encode($ret[$key]["json_data"]);
                 }
-            } else {
-                $this->set_m_error_message('get_meeting_changes: Invalid XML Format ('.$uri.')');
             }
         } elseif (!$this->get_m_error_message()) {
             $this->set_m_error_message('get_meeting_changes: Invalid URI ('.$uri.')');
@@ -481,8 +447,7 @@ This array is preset with keys for the available parameters.
  *   that format's shared ID, for quick lookup.                                          *
  ****************************************************************************************/
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_server_formats( $in_force_refresh = false ///< If this is true, then the server will be queried, even if there is a cache.
-    )
+    public function get_server_formats($in_force_refresh = false) ///< If this is true, then the server will be queried, even if there is a cache.
     {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         $ret = null;
@@ -495,44 +460,20 @@ This array is preset with keys for the available parameters.
         if ($in_force_refresh || !is_array($this->get_m_outgoing_parameter('formats')) || !count($this->get_m_outgoing_parameter('formats'))) {
             $uri = $this->get_m_root_uri(); // Get the cleaned URI.
 
-            $uri .= '/client_interface/xml/index.php?switcher=GetFormats';  // We will load the XML XML.
+            $uri .= '/client_interface/json/?switcher=GetFormats';  // We will load the JSON.
 
-            // Get the XML data from the remote server. We will use GET.
+            // Get the JSON data from the remote server. We will use GET.
             $data = self::call_curl($uri, false, $error_message);
 
             // Save any internal error message from the transaction.
             $this->set_m_error_message($error_message);
 
-            // If we get a valid response, we then parse the XML using the PHP DOMDocument class.
+            // If we get a valid response, we then parse the JSON.
             if (!$this->get_m_error_message() && $data) {
-                $info_file = new DOMDocument;
-                if ($info_file instanceof DOMDocument) {
-                    if (@$info_file->loadXML($data)) {
-                        $has_info = $info_file->getElementsByTagName("row");
-
-                        if (($has_info instanceof domnodelist) && $has_info->length) {
-                            $ret = array();
-
-                            foreach ($has_info as $format) {
-                                if ($format->hasChildNodes()) {
-                                    $format_ar = array();
-                                    foreach ($format->childNodes as $format_elem) {
-                                        $key = $format_elem->nodeName;
-                                        $value = $format_elem->nodeValue;
-                                        $format_ar[$key] = $value;
-                                    }
-                                    $ret[$format_ar['id']] = $format_ar;
-                                }
-                            }
-                            $this->set_m_outgoing_parameter('formats', $ret);
-                        } else {
-                            $this->set_m_error_message('get_server_formats: Invalid XML Format ('.$uri.')');
-                        }
-                    } else {
-                        $this->set_m_error_message('get_server_formats: Invalid XML Format ('.$uri.')');
-                    }
-                } else {
-                    $this->set_m_error_message('get_server_formats: Invalid XML Format ('.$uri.')');
+                $ret = array();
+                $data = json_decode($data, true);
+                foreach ($data as $format) {
+                    $ret[$format['id']] = $format;
                 }
             } elseif (!$this->get_m_error_message()) {
                 $this->set_m_error_message('get_server_formats: Invalid URI ('.$uri.')');
@@ -555,8 +496,7 @@ This array is preset with keys for the available parameters.
  *   \returns An associative array, containing the server Service bodies
  ****************************************************************************************/
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_server_service_bodies( $in_force_refresh = false  ///< If this is true, then the server will be queried, even if there is a cache.
-    )
+    public function get_server_service_bodies($in_force_refresh = false)  ///< If this is true, then the server will be queried, even if there is a cache.
     {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         $ret = null;
@@ -569,37 +509,20 @@ This array is preset with keys for the available parameters.
         if ($in_force_refresh || !is_array($this->get_m_outgoing_parameter('services')) || !count($this->get_m_outgoing_parameter('services'))) {
             $uri = $this->get_m_root_uri(); // Get the cleaned URI.
 
-            $uri .= '/client_interface/xml/GetServiceBodies.php';   // We will load the XML file.
+            $uri .= '/client_interface/json/?switcher=GetServiceBodies';   // We will load the JSON.
 
-            // Get the XML data from the remote server. We will use GET.
+            // Get the JSON data from the remote server. We will use GET.
             $data = self::call_curl($uri, false, $error_message);
 
             // Save any internal error message from the transaction.
             $this->set_m_error_message($error_message);
 
-            // If we get a valid response, we then parse the XML using the PHP DOMDocument class.
+            // If we get a valid response, we then parse the JSON.
             if (!$this->get_m_error_message() && $data) {
-                $info_file = new DOMDocument;
-                if ($info_file instanceof DOMDocument) {
-                    if (@$info_file->loadXML($data)) {
-                        $has_info = $info_file->getElementsByTagName("serviceBodies");
-
-                        if (($has_info instanceof DOMNodeList) && $has_info->length) {
-                            $sb_node = $has_info->item(0);
-                            if ($sb_node instanceof DOMElement) {
-                                foreach ($sb_node->childNodes as $node) {
-                                    if (method_exists($node, 'getAttribute')) {
-                                        $ret[$node->getAttribute('id')] = self::extract_service_body_info($node);
-                                    }
-                                }
-                            }
-                            $this->set_m_outgoing_parameter('services', $ret);
-                        } else {
-                            $this->set_m_error_message('get_server_service_bodies: Invalid XML Format ('.$uri.')');
-                        }
-                    } else {
-                        $this->set_m_error_message('get_server_service_bodies: Failed to Load File ('.$uri.')');
-                    }
+                $ret = array();
+                $data = json_decode($data, true);
+                foreach ($data as $serviceBody) {
+                    $ret[$serviceBody['id']] = $serviceBody;
                 }
             } elseif (!$this->get_m_error_message()) {
                 $this->set_m_error_message('get_server_service_bodies: Invalid URI ('.$uri.')');
@@ -626,8 +549,7 @@ This array is preset with keys for the available parameters.
  *   \returns An array of strings, containing the server meeting_key values.             *
  ****************************************************************************************/
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_server_meeting_keys( $in_force_refresh = false    ///< If this is true, then the server will be queried, even if there is a cache.
-    )
+    public function get_server_meeting_keys($in_force_refresh = false)    ///< If this is true, then the server will be queried, even if there is a cache.
     {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         $ret = null;
@@ -640,35 +562,18 @@ This array is preset with keys for the available parameters.
         if ($in_force_refresh || !is_array($this->get_m_outgoing_parameter('meeting_key')) || !count($this->get_m_outgoing_parameter('meeting_key'))) {
             $uri = $this->get_m_root_uri(); // Get the cleaned URI.
 
-            $uri .= '/client_interface/xsd/GetSearchResults.php';   // We will load the XML file.
+            $uri .= '/client_interface/json/?switcher=GetFieldKeys';   // We will load the JSON.
 
-            // Get the XML data from the remote server. We will use GET.
+            // Get the JSON data from the remote server. We will use GET.
             $data = self::call_curl($uri, false, $error_message);
             // Save any internal error message from the transaction.
             $this->set_m_error_message($error_message);
 
-            // If we get a valid response, we then parse the XML using the PHP DOMDocument class.
+            // If we get a valid response, we then parse the JSON.
             if (!$this->get_m_error_message() && $data) {
-                $info_file = new DOMDocument;
-                if ($info_file instanceof DOMDocument) {
-                    if (@$info_file->loadXML($data)) {
-                        $sequence_elements = $info_file->getElementsByTagName("sequence");
-                        $sequence_element = $sequence_elements->item(1);
-                        // We now have the XSD sequence element that is the immediate container for the meeting_key items
-                        if ($sequence_element instanceof DOMElement) {
-                            foreach ($sequence_element->childNodes as $sb_node) {
-                                if (method_exists($sb_node, 'getAttribute') && $sb_node->getAttribute('name')) {
-                                    $ret[] = $sb_node->getAttribute('name');
-                                }
-                            }
-
-                            $this->set_m_outgoing_parameter('meeting_key', $ret);
-                        } else {
-                            $this->set_m_error_message('get_server_meeting_keys: Invalid XML Format ('.$uri.')');
-                        }
-                    } else {
-                        $this->set_m_error_message('get_server_service_bodies: Failed to Load File ('.$uri.')');
-                    }
+                $data = json_decode($data, true);
+                foreach ($data as $field_key) {
+                    $ret[] = $field_key["key"];
                 }
             } elseif (!$this->get_m_error_message()) {
                 $this->set_m_error_message('get_server_meeting_keys: Invalid URI ('.$uri.')');
@@ -690,8 +595,7 @@ This array is preset with keys for the available parameters.
  *   of preset values.                                                                   *
  ****************************************************************************************/
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_transaction_key_values(   $in_parameter_key   ///< A string. The key for this parameter..
-    )
+    public function get_transaction_key_values($in_parameter_key)  ///< A string. The key for this parameter..
     {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         $ret = null;
@@ -965,14 +869,14 @@ This array is preset with keys for the available parameters.
         $uri = $this->get_m_root_uri(); // Get the cleaned URI.
 
         // For meeting searches, we ask for the response to be compressed, as it can be verbose.
-        $uri .= '/client_interface/xml/index.php?switcher=GetSearchResults&compress_output=1';  // We will load the XML file.
+        $uri .= '/client_interface/json/?switcher=GetSearchResults';  // We will load the JSON.
 
         $serialized_list = null;
 
         if ($transaction_params = $this->build_transaction_parameter_list($serialized_list)) {
             $uri .= $transaction_params;
         }
-        // Get the XML data from the remote server. We will use GET.
+        // Get the JSON data from the remote server. We will use GET.
         $data = self::call_curl($uri, false, $error_message);
 
         $ret['uri'] = $uri;
@@ -981,32 +885,18 @@ This array is preset with keys for the available parameters.
         // Save any internal error message from the transaction.
         $this->set_m_error_message($error_message);
 
-        // If we get a valid response, we then parse the XML using the PHP DOMDocument class.
         if (!$this->get_m_error_message() && $data) {
             // We now have a whole bunch of meetings. Time to process the response, and turn it into usable data.
-            $info_file = new DOMDocument;
-            if ($info_file instanceof DOMDocument) {
-                if (@$info_file->loadXML($data)) {
-                    // OK. We have our meeting data in a DOMDocument. Time to start rockin' and' rollin'...
 
-                    // Get each of the meeting elements. This will create a DOMNodeList
-                    $meeting_elements = $info_file->getElementsByTagName("row");
-
-                    if ($meeting_elements instanceof DOMNodeList) {
-                        foreach ($meeting_elements as $meeting) {
-                            if ($meeting instanceof DOMNode) {
-                                // Turn the DOMNode into an associative array.
-                                $node = self::extract_meeting_data($meeting);
-                                // Needs to be a valid meeting.
-                                if ($node) {
-                                    // We save each meeting in an element with its ID as the key.
-                                    $ret['meetings'][] = $node;
-                                }
-                            }
-                        }
+            if ($data && $data !== '{}' && $data !== '[]') {
+                $data = json_decode($data, true);
+                foreach ($data as $meeting) {
+                    $item = self::extract_meeting_data($meeting);
+                    // Needs to be a valid meeting.
+                    if ($item) {
+                        // We save each meeting in an element with its ID as the key.
+                        $ret['meetings'][] = $item;
                     }
-                } else {
-                    $this->set_m_error_message('meeting_search: Failed to Load File ('.$uri.')');
                 }
             }
         } elseif (!$this->get_m_error_message()) {
@@ -1029,8 +919,7 @@ This array is preset with keys for the available parameters.
  *   key is given here. It is not an error. Null if everything fit.                      *
  ****************************************************************************************/
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function apply_serialized_transaction( $in_serialized_list  ///< A string that holds the serialized transaction list.
-    )
+    public function apply_serialized_transaction($in_serialized_list) ///< A string that holds the serialized transaction list.
     {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         $ret = null;
@@ -1070,8 +959,7 @@ This array is preset with keys for the available parameters.
  *   \returns A string. The transaction parameter list.                                  *
  ****************************************************************************************/
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    private function build_transaction_parameter_list(  &$in_out_serialized_list    ///< A reference to a string that will hold the serialized transaction list.
-    )
+    private function build_transaction_parameter_list(&$in_out_serialized_list)   ///< A reference to a string that will hold the serialized transaction list.
     {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         $ret = null;
@@ -1131,41 +1019,6 @@ This array is preset with keys for the available parameters.
         return self::$m_supported_protocols;
     }
 
-    /************************************************************************************//**
- *   \brief Extract Service Body Information from A DOMDocument Node. Recursive function *
- *                                                                                       *
- *   \returns An array of arrays. The resulting array can be hierarchical, with elements *
- *   containing other elements. The array is associative, with a numeric key. This key   *
- *   is the Service body ID. The 'name' element is the readable name of the Service      *
- *   body, and the 'children' element (if it has one), contains "contained" Service body *
- *   elements.                                                                           *
- ****************************************************************************************/
-    // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    private static function extract_service_body_info( $in_dom_node    ///< The DOMNode for one Service Body, extracted from XML.
-    )
-    {
-        // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-        $ret = array();
-        $id = $in_dom_node->getAttribute('id');
-        $name = $in_dom_node->getAttribute('sb_name');
-        $description = $in_dom_node->getAttribute('sb_desc');
-        $type = $in_dom_node->getAttribute('sb_type');
-        $uri = $in_dom_node->getAttribute('sb_uri');
-        $kmluri = $in_dom_node->getAttribute('sb_kmluri');
-        $ret['name'] = $name;
-        $ret['description'] = $description;
-        $ret['type'] = $type;
-        $ret['uri'] = $uri;
-        $ret['kmluri'] = $kmluri;
-        if ($in_dom_node->hasChildNodes()) {
-            foreach ($in_dom_node->childNodes as $sb_node) {
-                if (method_exists($sb_node, 'getAttribute') && $sb_node->getAttribute('id')) {
-                    $ret['children'][$sb_node->getAttribute('id')] = self::extract_service_body_info($sb_node);
-                }
-            }
-        }
-        return $ret;
-    }
 
     /************************************************************************************//**
  *   \brief Extracts the data from one meeting.                                          *
@@ -1173,16 +1026,13 @@ This array is preset with keys for the available parameters.
  *   \returns An associative array, with all the meeting data.                           *
  ****************************************************************************************/
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    private static function extract_meeting_data( $in_meeting_node  ///< The DOMNode for one meeting, extracted from XML.
-    )
+    private static function extract_meeting_data($in_meeting_item)
     {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         $ret = null;
 
-        if ($in_meeting_node->hasChildNodes()) {
-            foreach ($in_meeting_node->childNodes as $node) {
-                $key = $node->nodeName;
-                $value = $node->nodeValue;
+        foreach ($in_meeting_item as $key => $value) {
+            if ($value) {
                 $ret[$key] = $value;
             }
         }
@@ -1298,7 +1148,7 @@ This array is preset with keys for the available parameters.
                     $error_message = "call_curl: curl failure calling $in_uri, ".curl_error($resource)."\n".curl_errno($resource);
                 }
             } else {
-                // Do what you want with returned content (e.g. HTML, XML, etc) here or AFTER curl_close() call below as it is stored in the $content variable.
+                // Do what you want with returned content (e.g. HTML, etc) here or AFTER curl_close() call below as it is stored in the $content variable.
 
                 // You MIGHT want to get the HTTP status code returned by server (e.g. 200, 400, 500).
                 // If that is the case then this is how to do it.
