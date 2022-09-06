@@ -8,6 +8,9 @@
     },
     {
       "name": "radius314"
+    },
+    {
+      "name": "pjaudiomv"
     }],
   "require": {},
   "require-dev": {
