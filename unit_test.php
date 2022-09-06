@@ -45,7 +45,7 @@ define('U_TEST_MEETING_ID', 734);
 *   and you can specify a local server if running on a localhost machine.                   *
 *                                                                                           *
 *   NOTE: The caller can override the URI, by providing one in the 'test_uri' query param.  *
-*   Example: unit_test.php?test_uri=https://bmlt.app/stable/main_server             *
+*   Example: unit_test.php?test_uri=https://bmlt.app/stable/main_server                     *
 *                                                                                           *
 *   \returns A string. The URI to be presented to the class.                                *
 ********************************************************************************************/
@@ -173,8 +173,7 @@ function u_test_get_standard_server_parameters(
 *                                                                                           *
 *   \returns A string. The XHTML to be displayed (Can be an error message).                 *
 ********************************************************************************************/
-function u_test_draw_service_body( $in_service_body_array
-                                    )
+function u_test_draw_service_body($in_service_body_array)
 {
     $ret = '<div class="name_div"><strong>'.htmlspecialchars($in_service_body_array['name']).'</strong></div>';
     $ret .= '<div class="test_container_div">';
@@ -272,8 +271,7 @@ function u_test_server_root_uri(
 *                                                                                           *
 *   \returns A string. The XHTML to be displayed (Can be an error message).                 *
 ********************************************************************************************/
-function u_test_server_parameters_outgoing( &$in_test_subject   ///< The object to be tested.
-                                            )
+function u_test_server_parameters_outgoing(&$in_test_subject)  ///< The object to be tested.
 {
     $ret = '<h1 id="outgoing_parameter_test"># BEGIN OUTGOING PARAMETER STORAGE UNIT TESTS</h1>';
     $ret .= '<div class="test_container_div">';
@@ -382,8 +380,7 @@ function u_test_server_parameters_outgoing( &$in_test_subject   ///< The object 
 *                                                                                           *
 *   \returns A string. The XHTML to be displayed.                                           *
 ********************************************************************************************/
-function u_test_basic_search( $in_root_server_uri   ///< The root uri of the server to be searched.
-                            )
+function u_test_basic_search($in_root_server_uri)  ///< The root uri of the server to be searched.
 {
     $ret = '<h1 id="basic_search_test"># BEGIN BASIC SEARCH UNIT TEST</h1>';
     $ret .= '<div class="test_container_div">';
@@ -529,8 +526,7 @@ function u_test_complex_search(
 *                                                                                           *
 *   \returns A string. The XHTML to be displayed.                                           *
 ********************************************************************************************/
-function u_test_filtered_search( $in_root_server_uri        ///< The root uri of the server to be searched.
-                            )
+function u_test_filtered_search($in_root_server_uri)        ///< The root uri of the server to be searched.
 {
     $ret = '<h1 id="partial_search_test"># BEGIN FILTERED SEARCH UNIT TEST</h1>';
     $ret .= '<div class="test_container_div">';
@@ -668,8 +664,7 @@ function u_test_serialized_search(
 *                                                                                           *
 *   \returns A string. The XHTML to be displayed.                                           *
 ********************************************************************************************/
-function u_test_draw_meeting( $in_meeting_array
-                            )
+function u_test_draw_meeting($in_meeting_array)
 {
     $ret = '<div class="name_div"><h3>'.htmlspecialchars($in_meeting_array['meeting_name']).' ('.htmlspecialchars($in_meeting_array['id_bigint']).')</h3>';
     foreach ($in_meeting_array as $key => $value) {
@@ -692,8 +687,7 @@ function u_test_draw_meeting( $in_meeting_array
 *                                                                                           *
 *   \returns A string. The XHTML to be displayed.                                           *
 ********************************************************************************************/
-function u_test_changes( $in_root_server_uri       ///< The server URI.
-                        )
+function u_test_changes($in_root_server_uri)       ///< The server URI.
 {
     $ret = null;
     $ret = '<h1 id="change_request_test"># BEGIN CHANGE REQUEST UNIT TEST</h1>';

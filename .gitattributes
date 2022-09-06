@@ -4,3 +4,4 @@
 unit_test.php export-ignore
 README.md export-ignore
 /doc export-ignore
+.github export-ignore
