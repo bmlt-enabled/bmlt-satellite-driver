@@ -280,7 +280,7 @@ This array is preset with keys for the available parameters.
         if ($in_force_refresh || !$this->get_m_server_version()) {
             $uri = $this->get_m_root_uri(); // Get the cleaned URI.
 
-            $uri .= '/client_interface/serverInfo.xml'; // We will load the XML file.
+            $uri .= '/client_interface/json/?switcher=GetServerInfo'; // We will load the XML file.
 
             // Get the XML data from the remote server. We will use GET.
             $data = self::call_curl($uri, false, $error_message);
@@ -290,17 +290,9 @@ This array is preset with keys for the available parameters.
 
             // If we get a valid response, we then parse the XML using the PHP DOMDocument class.
             if (!$this->get_m_error_message() && $data) {
-                $info_file = new DOMDocument;
-                if ($info_file instanceof DOMDocument) {
-                    if (@$info_file->loadXML($data)) {
-                        $has_info = $info_file->getElementsByTagName("bmltInfo");
-
-                        if (($has_info instanceof domnodelist) && $has_info->length) {
-                            $ret = $has_info->item(0)->nodeValue;
-                            $this->set_m_server_version($ret);
-                        }
-                    }
-                }
+                $info = json_decode($data, true);
+                $ret = $info[0]["version"];
+                $this->set_m_server_version($ret);
             }
 
             if (!$ret && !$this->get_m_error_message()) {
