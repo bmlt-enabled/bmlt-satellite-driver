@@ -5,10 +5,10 @@ This is a class that is to be used by PHP coders, for writing custom satellite i
 of the BMLT (Basic Meeting List Toolbox).
 
 It is a class that handles the controller layer in the BMLT client/server system. This class will
-deal with all HTTP interactions, and uses the XML interface of the BMLT root server to operate.
+deal with all HTTP interactions, and uses the JSON interface of the BMLT root server to operate.
 
 It is designed to provide a functional interface to a communication infrastructure for
-BMLT satellites. It communicates with the root server using the XML variant of the REST
+BMLT satellites. It communicates with the root server using the JSON variant of the REST
 interface.
 
 This class will not use a class to hold transactions or parameters. This is because [the
