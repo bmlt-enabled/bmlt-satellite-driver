@@ -38,6 +38,11 @@ This class is used in all of the current CMS satellite classes, via [the BMLT Sa
 CHANGELIST
 ----------
 
+***Version 1.1.1* ** *- November 12, 2023*
+
+- Fixed warning using strcmp with null.
+
+
 ***Version 1.1.0* ** *- September 6, 2022*
 
 - Converted all XML endpoints to JSON.
