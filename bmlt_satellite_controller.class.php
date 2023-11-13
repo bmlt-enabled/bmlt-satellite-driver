@@ -1,9 +1,10 @@
 <?php
+
 /****************************************************************************************/
 /**
 \brief Provides low-level communication to the BMLT Root Server.
 
-\version 1.1.0
+\version 1.1.1
 
 This file is part of the Basic Meeting List Toolbox (BMLT).
 
@@ -100,7 +101,7 @@ This array is preset with keys for the available parameters.
                         $this->load_standard_outgoing_parameters();
                     }
                 } else {
-                    $this->set_m_error_message('__construct: The root server at ('.$in_root_uri_string.') is too old (it is version '.$version.')! It needs to be at least Version 1.8.6!');
+                    $this->set_m_error_message('__construct: The root server at (' . $in_root_uri_string . ') is too old (it is version ' . $version . ')! It needs to be at least Version 1.8.6!');
                 }
             }
         }
@@ -122,7 +123,7 @@ This array is preset with keys for the available parameters.
     ) {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         // If we are selecting a new server, or changing servers, we flush all stored parameters.
-        if (!$in_skip_flush && strcmp($in_root_uri_string, $this->m_root_uri_string)) {
+        if (!$in_skip_flush && strcmp($in_root_uri_string, $this->m_root_uri_string ?? '')) {
             $this->flush_parameters();
         }
 
@@ -164,7 +165,7 @@ This array is preset with keys for the available parameters.
         // At this point, we have a protocol, and a URI that has had its trailing slash removed.
         // Reassemble them into a "cleaned" return string.
 
-        $ret_string = $protocol.'://'.$uri;
+        $ret_string = $protocol . '://' . $uri;
 
         return $ret_string;
     }
@@ -291,7 +292,7 @@ This array is preset with keys for the available parameters.
             }
 
             if (!$ret && !$this->get_m_error_message()) {
-                $this->set_m_error_message('get_server_version: Invalid URI ('.$uri.')');
+                $this->set_m_error_message('get_server_version: Invalid URI (' . $uri . ')');
             }
         } else {
             $ret = $this->get_m_server_version();
@@ -349,7 +350,7 @@ This array is preset with keys for the available parameters.
             }
 
             if (!$ret && !$this->get_m_error_message()) {
-                $this->set_m_error_message('get_server_langs: Invalid URI ('.$uri.')');
+                $this->set_m_error_message('get_server_langs: Invalid URI (' . $uri . ')');
             }
         } else {
             $ret = $this->get_m_outgoing_parameter('langs');
@@ -396,19 +397,19 @@ This array is preset with keys for the available parameters.
         $uri .= '/client_interface/json/?switcher=GetChanges';  // We will load the JSON data.
 
         if (intval($in_start_date)) {
-            $uri .= '&start_date='.date('Y-m-d', intval($in_start_date));
+            $uri .= '&start_date=' . date('Y-m-d', intval($in_start_date));
         }
 
         if (intval($in_end_date)) {
-            $uri .= '&end_date='.date('Y-m-d', intval($in_end_date));
+            $uri .= '&end_date=' . date('Y-m-d', intval($in_end_date));
         }
 
         if (intval($in_meeting_id)) {
-            $uri .= '&meeting_id='.intval($in_meeting_id);
+            $uri .= '&meeting_id=' . intval($in_meeting_id);
         }
 
         if (intval($in_service_body_id)) {
-            $uri .= '&service_body_id='.intval($in_service_body_id);
+            $uri .= '&service_body_id=' . intval($in_service_body_id);
         }
 
         // Get the JSON data from the remote server. We will use GET.
@@ -419,7 +420,7 @@ This array is preset with keys for the available parameters.
 
         // If we get a valid response, we then parse the JSON.
         if (!$this->get_m_error_message() && $data) {
-            $info_file = new DOMDocument;
+            $info_file = new DOMDocument();
             if ($data && $data !== '{}' && $data !== '[]') {
                 $ret = array();
                 $data = json_decode($data, true);
@@ -429,7 +430,7 @@ This array is preset with keys for the available parameters.
                 }
             }
         } elseif (!$this->get_m_error_message()) {
-            $this->set_m_error_message('get_meeting_changes: Invalid URI ('.$uri.')');
+            $this->set_m_error_message('get_meeting_changes: Invalid URI (' . $uri . ')');
         }
 
         return $ret;
@@ -476,7 +477,7 @@ This array is preset with keys for the available parameters.
                     $ret[$format['id']] = $format;
                 }
             } elseif (!$this->get_m_error_message()) {
-                $this->set_m_error_message('get_server_formats: Invalid URI ('.$uri.')');
+                $this->set_m_error_message('get_server_formats: Invalid URI (' . $uri . ')');
             }
         } else {
             $ret = $this->get_m_outgoing_parameter('formats');
@@ -525,7 +526,7 @@ This array is preset with keys for the available parameters.
                     $ret[$serviceBody['id']] = $serviceBody;
                 }
             } elseif (!$this->get_m_error_message()) {
-                $this->set_m_error_message('get_server_service_bodies: Invalid URI ('.$uri.')');
+                $this->set_m_error_message('get_server_service_bodies: Invalid URI (' . $uri . ')');
             }
         } else {
             $ret = $this->get_m_outgoing_parameter('services');
@@ -576,7 +577,7 @@ This array is preset with keys for the available parameters.
                     $ret[] = $field_key["key"];
                 }
             } elseif (!$this->get_m_error_message()) {
-                $this->set_m_error_message('get_server_meeting_keys: Invalid URI ('.$uri.')');
+                $this->set_m_error_message('get_server_meeting_keys: Invalid URI (' . $uri . ')');
             }
         } else {
             $ret = $this->get_m_outgoing_parameter('meeting_key');
@@ -611,7 +612,7 @@ This array is preset with keys for the available parameters.
                 $ret = $outgoing_parameters[$in_parameter_key];
             }
         } else {
-            $this->set_m_error_message('get_transaction_key_values: Invalid Parameter Key: "'.$in_parameter_key.'"');
+            $this->set_m_error_message('get_transaction_key_values: Invalid Parameter Key: "' . $in_parameter_key . '"');
         }
 
         return $ret;
@@ -664,7 +665,7 @@ This array is preset with keys for the available parameters.
             $transaction_array[$in_parameter_key] = $in_parameter_value;
             $ret = true;
         } else {
-            $this->set_m_error_message('set_current_transaction_parameter: Invalid Parameter Key: "'.$in_parameter_key.'"');
+            $this->set_m_error_message('set_current_transaction_parameter: Invalid Parameter Key: "' . $in_parameter_key . '"');
         }
 
         return $ret;
@@ -694,11 +695,11 @@ This array is preset with keys for the available parameters.
         $ret = null;
 
         if (!isset($this->m_outgoing_parameters[$in_parameter_key_string])) {
-            $this->set_m_error_message('get_m_outgoing_parameter: Invalid Key: "'.$in_parameter_key_string.'"');
+            $this->set_m_error_message('get_m_outgoing_parameter: Invalid Key: "' . $in_parameter_key_string . '"');
         } else {
             if (isset($in_parameter_secondary_key_string)) {
                 if (!isset($this->m_outgoing_parameters[$in_parameter_key_string][$in_parameter_secondary_key_string])) {
-                    $this->set_m_error_message('get_m_outgoing_parameter: Invalid Secondary Key: "'.$in_parameter_secondary_key_string.'"');
+                    $this->set_m_error_message('get_m_outgoing_parameter: Invalid Secondary Key: "' . $in_parameter_secondary_key_string . '"');
                 } else {
                     $ret =& $this->m_outgoing_parameters[$in_parameter_key_string][$in_parameter_secondary_key_string];
                 }
@@ -733,7 +734,7 @@ This array is preset with keys for the available parameters.
             }
             $this->m_outgoing_parameters[$in_parameter_key_string] = $in_parameter_value_mixed;
         } else {
-            $this->set_m_error_message('set_m_outgoing_parameter: Invalid Key: "'.$in_parameter_key_string.'"');
+            $this->set_m_error_message('set_m_outgoing_parameter: Invalid Key: "' . $in_parameter_key_string . '"');
         }
     }
 
@@ -900,7 +901,7 @@ This array is preset with keys for the available parameters.
                 }
             }
         } elseif (!$this->get_m_error_message()) {
-            $this->set_m_error_message('meeting_search: Invalid URI ('.$uri.')');
+            $this->set_m_error_message('meeting_search: Invalid URI (' . $uri . ')');
         }
 
         return $ret;
@@ -975,7 +976,7 @@ This array is preset with keys for the available parameters.
                             if ($param === true) {  // Boolean is converted to a "1"
                                 $param = 1;
                             }
-                            $ret .= $param_key.'[]='.urlencode(trim(strval($param)));
+                            $ret .= $param_key . '[]=' . urlencode(trim(strval($param)));
                         }
                     } elseif ((is_array($transaction_array[$param_key]) && (count($transaction_array[$param_key]) == 1)) || (!is_array($transaction_array[$param_key]) && isset($transaction_array[$param_key]))) {
                         $ret .= '&';
@@ -986,13 +987,13 @@ This array is preset with keys for the available parameters.
                         if ($param === true) {  // Boolean is converted to a "1"
                             $param = 1;
                         }
-                        $ret .= $param_key.'='.urlencode(trim(strval($param)));
+                        $ret .= $param_key . '=' . urlencode(trim(strval($param)));
                     } else {
-                        $this->set_m_error_message('build_transaction_parameter_list: Invalid Parameter Value: "'.$param_value.'" ('.$param_key.')');
+                        $this->set_m_error_message('build_transaction_parameter_list: Invalid Parameter Value: "' . $param_value . '" (' . $param_key . ')');
                         break;
                     }
                 } else {
-                    $this->set_m_error_message('build_transaction_parameter_list: Invalid Parameter Key: "'.$param_key.'"');
+                    $this->set_m_error_message('build_transaction_parameter_list: Invalid Parameter Key: "' . $param_key . '"');
                     break;
                 }
             }
@@ -1145,7 +1146,7 @@ This array is preset with keys for the available parameters.
                 // If there is no error message variable passed, we die quietly.
                 if (isset($error_message)) {
                     // Cram as much info into the error message as possible.
-                    $error_message = "call_curl: curl failure calling $in_uri, ".curl_error($resource)."\n".curl_errno($resource);
+                    $error_message = "call_curl: curl failure calling $in_uri, " . curl_error($resource) . "\n" . curl_errno($resource);
                 }
             } else {
                 // Do what you want with returned content (e.g. HTML, etc) here or AFTER curl_close() call below as it is stored in the $content variable.
