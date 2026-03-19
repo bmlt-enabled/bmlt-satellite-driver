@@ -420,7 +420,6 @@ This array is preset with keys for the available parameters.
 
         // If we get a valid response, we then parse the JSON.
         if (!$this->get_m_error_message() && $data) {
-            $info_file = new DOMDocument();
             if ($data && $data !== '{}' && $data !== '[]') {
                 $ret = array();
                 $data = json_decode($data, true);
