@@ -343,8 +343,14 @@ This array is preset with keys for the available parameters.
                 $langs = explode(",", $data[0]["langs"]);
                 $default_lang = $data[0]["nativeLang"];
                 foreach ($langs as $lang) {
-                    $ret[$lang]['name'] = $lang;
-                    $ret[$lang]['default'] = $lang === $default_lang ? true : false;
+                    # Danish is set to country not language code, so we must account for this.
+                    $lang_name = $lang == "dk" ? "da" : $lang;
+                    $lang_name = Locale::getDisplayLanguage($lang_name, $lang_name);
+                    $firstChar = mb_substr($lang_name, 0, 1, "utf-8");
+                    $then = mb_substr($lang_name, 1, null, "utf-8");
+                    $lang_name = mb_strtoupper($firstChar, "utf-8") . $then;
+                    $ret[$lang]['name'] = $lang_name;
+                    $ret[$lang]['default'] = $lang === $default_lang;
                 }
                 $this->set_m_outgoing_parameter('langs', $ret);
             }
